@@ -1,12 +1,13 @@
 package co.edu.unbosque.hermes.entity;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,19 +25,22 @@ public abstract class Usuario {
 	@Column(unique = true, nullable = false)
 	private String email;
 	@Column(nullable = false)
-	private String userName;
+	private String username;
 	@Column(unique = true, nullable = false)
 	private String password;
-	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
 	private Rol rol;
-	@Column(nullable = false)
-	private LocalDateTime fechaCreacion;
+	private boolean cuentaNoExpirada;
+	
+	public Usuario() {
+		// TODO Auto-generated constructor stub
+	}
 
-	public Usuario(String email, String password, Rol rol, LocalDateTime fechaCreacion) {
+	public Usuario(String email, String password, Rol rol, boolean cuentaNoExpirada) {
 		this.email = email;
 		this.password = password;
-		this.rol = rol;
-		this.fechaCreacion = fechaCreacion;
+		this.rol = Rol.USER;
+		this.cuentaNoExpirada = cuentaNoExpirada;
 	}
 
 	public long getId() {
@@ -55,12 +59,12 @@ public abstract class Usuario {
 		this.email = email;
 	}
 
-	public String getUserName() {
-		return userName;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getPassword() {
@@ -79,23 +83,27 @@ public abstract class Usuario {
 		this.rol = rol;
 	}
 
-	public LocalDateTime getFechaCreacion() {
-		return fechaCreacion;
+	public boolean isCuentaNoExpirada() {
+		return cuentaNoExpirada;
 	}
 
-	public void setFechaCreacion(LocalDateTime fechaCreacion) {
-		this.fechaCreacion = fechaCreacion;
+	public void setCuentaNoExpirada(boolean cuentaNoExpirada) {
+		this.cuentaNoExpirada = cuentaNoExpirada;
+	}
+
+	public enum Rol {
+		ADMIN, USER
 	}
 
 	@Override
 	public String toString() {
-		return "Usuario [id=" + id + ", email=" + email + ", userName=" + userName + ", password=" + password + ", rol="
-				+ rol + ", fechaCreacion=" + fechaCreacion + "]";
+		return "Usuario [id=" + id + ", email=" + email + ", userName=" + username + ", password=" + password + ", rol="
+				+ rol + ", cuentaNoExpirada=" + cuentaNoExpirada + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(email, fechaCreacion, Long.valueOf(id), password, rol, userName);
+		return Objects.hash(Boolean.valueOf(cuentaNoExpirada), email, Long.valueOf(id), password, rol, username);
 	}
 
 	@Override
@@ -107,14 +115,9 @@ public abstract class Usuario {
 		if (getClass() != obj.getClass())
 			return false;
 		Usuario other = (Usuario) obj;
-		return Objects.equals(email, other.email) && Objects.equals(fechaCreacion, other.fechaCreacion)
-				&& id == other.id && Objects.equals(password, other.password) && Objects.equals(rol, other.rol)
-				&& Objects.equals(userName, other.userName);
-	}
-
-	public enum Rol{
-		ADMIN, 
-		CLIENTE
+		return cuentaNoExpirada == other.cuentaNoExpirada && Objects.equals(email, other.email) && id == other.id
+				&& Objects.equals(password, other.password) && rol == other.rol
+				&& Objects.equals(username, other.username);
 	}
 
 }
