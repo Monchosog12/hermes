@@ -1,0 +1,118 @@
+
+<section class="translator-page">
+
+
+  <div class="translator-heading">
+    <span class="section-label">CODE TRANSLATION WORKSPACE</span>
+
+    <h1>Tu código, otro lenguaje.</h1>
+
+    <p>
+      Traduce código entre lenguajes de programación desde un espacio
+      diseñado para trabajar con claridad y precisión.
+    </p>
+  </div>
+
+  <div class="translator-card">
+  <div class="translator-toolbar">
+
+    <div class="language-selector">
+      <label for="sourceLanguage">Lenguaje de origen</label>
+
+      <select
+        id="sourceLanguage"
+        [value]="lenguajeOrigen"
+        (change)="lenguajeOrigen = $any($event.target).value">
+        <option value="javascript">JavaScript</option>
+        <option value="java">Java</option>
+        <option value="python">Python</option>
+      </select>
+    </div>
+
+    <button
+      type="button"
+      class="swap-button"
+      (click)="intercambiarLenguajes()"
+      aria-label="Intercambiar lenguajes">
+      ⇄
+    </button>
+
+    <div class="language-selector">
+      <label for="targetLanguage">Lenguaje de destino</label>
+
+      <select
+        id="targetLanguage"
+        [value]="lenguajeDestino"
+        (change)="lenguajeDestino = $any($event.target).value">
+        <option value="javascript">JavaScript</option>
+        <option value="java">Java</option>
+        <option value="python">Python</option>
+      </select>
+    </div>
+
+  </div>
+
+  <div class="editor-grid">
+
+    <section class="editor-panel">
+      <div class="editor-header">
+        <span class="status-dot"></span>
+        <h2>Código original</h2>
+        <span class="language-badge">{{ lenguajeOrigen }}</span>
+      </div>
+
+      <app-codeeditorcomponent
+        [codigo]="codigoOrigen"
+        [lenguaje]="lenguajeOrigen"
+        (codigoChange)="codigoOrigen = $event">
+      </app-codeeditorcomponent>
+    </section>
+
+    <section class="editor-panel">
+      <div class="editor-header">
+        <span class="status-dot result-dot"></span>
+        <h2>Resultado</h2>
+        <span class="language-badge">{{ lenguajeDestino }}</span>
+      </div>
+
+      <app-codeeditorcomponent
+        [codigo]="codigoDestino"
+        [lenguaje]="lenguajeDestino"
+        (codigoChange)="codigoDestino = $event">
+      </app-codeeditorcomponent>
+    </section>
+
+  </div>
+
+  <div class="translator-actions">
+
+    <button
+      type="button"
+      class="secondary-button"
+      (click)="limpiar()">
+      Limpiar
+    </button>
+
+    <button
+      type="button"
+      class="secondary-button"
+      (click)="copiarResultado()">
+      Copiar resultado
+    </button>
+
+    <button
+      type="button"
+      class="primary-button"
+      (click)="traducir()">
+      Traducir código
+      <span aria-hidden="true">→</span>
+    </button>
+
+  </div>
+
+  <p class="translator-notice">
+    La traducción automática estará disponible cuando conectemos
+    el servicio correspondiente.
+  </p>
+</div>
+</section>
