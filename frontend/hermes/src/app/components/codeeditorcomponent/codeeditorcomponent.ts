@@ -19,6 +19,7 @@ import { EditorView } from '@codemirror/view';
 import { javascript } from '@codemirror/lang-javascript';
 import { java } from '@codemirror/lang-java';
 import { python } from '@codemirror/lang-python';
+import { syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language';
 
 type Lenguaje = 'javascript' | 'java' | 'python';
 
@@ -91,7 +92,9 @@ export class Codeeditorcomponent
   private crearEditor(): void {
     const estado = EditorState.create({
       doc: this.codigo,
-      extensions: [
+      extensions: [syntaxHighlighting(defaultHighlightStyle, {
+        fallback: true
+      }),
         basicSetup,
 
         this.compartimentoLenguaje.of(
