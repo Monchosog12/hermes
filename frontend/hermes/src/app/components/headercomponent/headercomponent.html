@@ -15,7 +15,7 @@
       <span>Traductor</span>
     </a>
 
-    <a routerLink="/mejorar-codigo" routerLinkActive="active">
+    <a routerLink="/mejoracodigo" routerLinkActive="active">
       <i class="bi bi-stars"></i>
       <span>Mejorar código</span>
     </a>
@@ -33,13 +33,17 @@
             data-bs-toggle="modal"
             data-bs-target="#modalLogin"> Ingresa
     </button>
-    <button class="btn"> Registrate
+    <button class="btn"
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#modalRegistro"> Registrate
     </button>
   </div>
 </header>
 
 <div
-  class="modal fade"
+  class=" modal fade
+    "
   id="modalLogin"
   tabindex="-1"
   aria-labelledby="modalLoginLabel"
@@ -94,4 +98,102 @@
     </div>
   </div>
 </div>
+
+
+<!-- Botón para abrir el registro -->
+<button
+  class="btn"
+  type="button"
+  data-bs-toggle="modal"
+  data-bs-target="#modalRegistro">
+  Regístrate
+</button>
+
+<!-- Modal de registro -->
+<div
+  class="modal fade"
+  id="modalRegistro"
+  tabindex="-1"
+  aria-labelledby="modalRegistroLabel"
+  aria-hidden="true">
+
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="card">
+
+        <!-- Botón para cerrar -->
+        <button
+          type="button"
+          class="cerrar-modal"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar">
+          &times;
+        </button>
+
+        <div class="contenido-login">
+          <h2 id="modalRegistroLabel">Crear cuenta</h2>
+
+          <form>
+            <!-- Nombre -->
+            <div class="campo">
+              <label for="nombreRegistro">Nombre completo</label>
+              <input
+                type="text"
+                id="nombreRegistro"
+                name="nombre"
+                placeholder="Ingresa tu nombre"
+                autocomplete="name"
+                required>
+            </div>
+
+            <!-- Correo -->
+            <div class="campo">
+              <label for="correoRegistro">Correo electrónico</label>
+              <input
+                type="email"
+                id="correoRegistro"
+                name="correo"
+                placeholder="Ingresa tu correo"
+                autocomplete="email"
+                required>
+            </div>
+
+            <!-- Contraseña -->
+            <div class="campo">
+              <label for="claveRegistro">Contraseña</label>
+              <input
+                type="password"
+                id="claveRegistro"
+                name="clave"
+                placeholder="Crea una contraseña"
+                autocomplete="new-password"
+                required>
+            </div>
+
+            <!-- Confirmar contraseña -->
+            <div class="campo">
+              <label for="confirmarClaveRegistro">
+                Confirmar contraseña
+              </label>
+              <input
+                type="password"
+                id="confirmarClaveRegistro"
+                name="confirmarClave"
+                placeholder="Repite tu contraseña"
+                autocomplete="new-password"
+                required>
+            </div>
+
+            <button type="submit" class="btn-login">
+              Crear cuenta
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
 

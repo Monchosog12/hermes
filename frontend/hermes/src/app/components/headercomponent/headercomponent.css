@@ -420,3 +420,206 @@
     font-size: 1.7em;
   }
 }
+
+/* =========================
+   MODAL DE REGISTRO
+   Mismos estilos que el login
+========================= */
+
+#modalRegistro {
+  z-index: 1055;
+}
+
+#modalRegistro .modal-dialog {
+  width: calc(100% - 32px);
+  max-width: 640px;
+  margin: 1.75rem auto;
+}
+
+#modalRegistro .modal-content {
+  background: transparent;
+  border: none;
+  border-radius: 20px;
+  box-shadow: none;
+  overflow: visible;
+}
+
+/* Tarjeta animada */
+
+#modalRegistro .card {
+  width: 100%;
+  min-height: 350px;
+  background: #07182e;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border: none;
+  border-radius: 20px;
+  padding: 35px 25px 25px;
+  box-sizing: border-box;
+  isolation: isolate;
+}
+
+#modalRegistro .card::before {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 130%;
+  background-image: linear-gradient(
+    180deg,
+    rgb(0, 183, 255),
+    rgb(255, 48, 255)
+  );
+  animation: rotBGimg 3s linear infinite;
+  transition: background-image 0.2s linear;
+  pointer-events: none;
+  z-index: -2;
+}
+
+#modalRegistro .card::after {
+  content: "";
+  position: absolute;
+  background: #07182e;
+  inset: 5px;
+  border-radius: 15px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+#modalRegistro .card:hover::before {
+  background-image: linear-gradient(
+    180deg,
+    rgb(81, 255, 0),
+    purple
+  );
+  animation-duration: 3.5s;
+}
+
+/* Contenido del formulario */
+
+#modalRegistro .contenido-login {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 400px;
+  color: #fff;
+}
+
+#modalRegistro .contenido-login h2 {
+  text-align: center;
+  font-size: 2em;
+  margin: 0 0 25px;
+  color: #fff;
+}
+
+#modalRegistro .campo {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 18px;
+}
+
+#modalRegistro .campo label {
+  color: #fff;
+  font-size: 14px;
+}
+
+#modalRegistro .campo input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #52657e;
+  border-radius: 8px;
+  background: #10243c;
+  color: #fff;
+  outline: none;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 2;
+}
+
+#modalRegistro .campo input:focus {
+  border-color: #00b7ff;
+  box-shadow: 0 0 5px rgb(0 183 255 / 50%);
+}
+
+#modalRegistro .campo input::placeholder {
+  color: #aab7c8;
+}
+
+/* Botón de registro */
+
+#modalRegistro .btn-login {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #0077ff, #a020f0);
+  color: #fff;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+  overflow: visible;
+}
+
+#modalRegistro .btn-login:hover {
+  color: #fff;
+  transform: scale(1.02);
+}
+
+#modalRegistro .btn-login::after {
+  content: none;
+}
+
+/* Botón cerrar */
+
+#modalRegistro .cerrar-modal {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.2s, transform 0.2s;
+}
+
+#modalRegistro .cerrar-modal:hover {
+  color: #ff4d6d;
+  transform: scale(1.15);
+}
+
+#modalRegistro .cerrar-modal::after {
+  content: none;
+}
+
+/* Ajustes para pantallas pequeñas */
+
+@media (max-width: 600px) {
+  #modalRegistro .modal-dialog {
+    width: calc(100% - 24px);
+    margin: 1rem auto;
+  }
+
+  #modalRegistro .card {
+    min-height: 350px;
+    padding: 45px 20px 25px;
+  }
+
+  #modalRegistro .contenido-login h2 {
+    font-size: 1.7em;
+  }
+}
