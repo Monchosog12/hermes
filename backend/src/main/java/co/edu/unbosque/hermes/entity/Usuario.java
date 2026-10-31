@@ -17,16 +17,14 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "usuario")
-@Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "rol", discriminatorType = DiscriminatorType.STRING)
-public abstract class Usuario {
+public class Usuario {
 
 	private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) long id;
 	@Column(unique = true, nullable = false)
 	private String email;
 	@Column(nullable = false)
 	private String username;
-	@Column(unique = true, nullable = false)
+	@Column(nullable = false)
 	private String password;
 	@Enumerated(EnumType.STRING)
 	private Rol rol;
@@ -36,11 +34,10 @@ public abstract class Usuario {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Usuario(String email, String password, Rol rol, boolean cuentaNoExpirada) {
-		this.email = email;
+	public Usuario(String username, String password, Rol rol) {
+		this.username = username;
 		this.password = password;
 		this.rol = Rol.USER;
-		this.cuentaNoExpirada = cuentaNoExpirada;
 	}
 
 	public long getId() {

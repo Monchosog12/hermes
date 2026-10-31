@@ -16,8 +16,8 @@ public class UsuarioDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public UsuarioDTO(String email, String password, Rol rol) {
-		this.email = email;
+	public UsuarioDTO(String username, String password, Rol rol) {
+		this.username = username;
 		this.password = password;
 		this.rol = rol;
 	}

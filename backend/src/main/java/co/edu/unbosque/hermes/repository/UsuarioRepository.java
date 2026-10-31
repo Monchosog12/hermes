@@ -13,4 +13,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
 	Optional<Usuario> searchByUsername(String username);
 	Optional<List<Usuario>> searchByRol(Rol rol);
 	void deleteByUsername(String username);
+	Optional<Usuario> findByUsername(String username);
 }
