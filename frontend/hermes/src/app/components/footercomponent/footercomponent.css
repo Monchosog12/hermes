@@ -1,0 +1,145 @@
+
+:host {
+  display: block;
+  margin-top: auto;
+}
+
+.footer {
+  padding: 38px 5% 20px;
+  background: #0d111d;
+  border-top: 1px solid #292d40;
+  color: #c6c8d8;
+}
+
+.footer-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 48px;
+  padding-bottom: 30px;
+}
+
+.footer-brand {
+  max-width: 330px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  text-decoration: none;
+}
+
+.brand-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid #7861dc;
+  border-radius: 10px;
+  background: #25203f;
+  color: #b7a5ff;
+  font-family: monospace;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.brand-name {
+  color: #f5f4ff;
+  font-size: 22px;
+  font-weight: 750;
+  letter-spacing: -0.8px;
+}
+
+.brand-name span {
+  color: #a78bfa;
+}
+
+.brand-description {
+  margin: 15px 0 0;
+  color: #969bb1;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.footer-links {
+  display: flex;
+  gap: clamp(32px, 7vw, 100px);
+}
+
+.link-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.link-group h2 {
+  margin: 0 0 4px;
+  color: #b9a6ff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.link-group a {
+  color: #a7abc0;
+  font-size: 12px;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.link-group a:hover {
+  color: #ffffff;
+}
+
+.link-group a:focus-visible,
+.brand:focus-visible {
+  outline: 2px solid #a797ff;
+  outline-offset: 4px;
+  border-radius: 3px;
+}
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 18px;
+  border-top: 1px solid #292d40;
+}
+
+.footer-bottom p {
+  margin: 0;
+  color: #85899f;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.version {
+  color: #a7abc0;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+@media (max-width: 650px) {
+  .footer {
+    padding: 30px 6% 18px;
+  }
+
+  .footer-main {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .footer-links {
+    width: 100%;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .footer-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+}

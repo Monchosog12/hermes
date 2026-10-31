@@ -1,0 +1,247 @@
+
+<section class="mejora-page">
+
+  <!-- Encabezado -->
+  <header class="mejora-heading">
+    <span class="section-label">CODE OPTIMIZATION WORKSPACE</span>
+
+    <h1>Mejora tu código.</h1>
+
+    <p>
+      Refactoriza, optimiza y mejora la calidad de tu código
+      aplicando buenas prácticas de programación.
+    </p>
+  </header>
+
+  <!-- Configuración de la mejora -->
+
+  <section class="configuracion">
+    <div class="configuracion-header">
+      <div class="configuracion-titulo">
+        <div class="titulo-icono">
+          <i class="fa-solid fa-sliders"></i>
+        </div>
+
+        <div>
+          <h2>Configuración de mejora</h2>
+          <p>Personaliza cómo quieres optimizar tu código.</p>
+        </div>
+      </div>
+
+      <span class="configuracion-etiqueta">
+      <i class="fa-solid fa-wand-magic-sparkles"></i>
+      Personalizable
+    </span>
+    </div>
+
+    <div class="selector-lenguaje">
+      <label for="lenguaje">
+        <i class="fa-solid fa-code"></i>
+        Lenguaje de programación
+      </label>
+
+      <div class="select-contenedor">
+        <select
+          id="lenguaje"
+          [(ngModel)]="lenguajeSeleccionado"
+          name="lenguaje">
+
+          <option value="javascript">JavaScript</option>
+          <option value="java">Java</option>
+          <option value="python">Python</option>
+        </select>
+
+        <i class="fa-solid fa-chevron-down select-flecha"></i>
+      </div>
+    </div>
+
+    <div class="opciones-header">
+      <div>
+        <h3>¿Qué deseas mejorar?</h3>
+        <p>Selecciona una o varias opciones.</p>
+      </div>
+
+      <span class="opciones-contador">6 opciones</span>
+    </div>
+
+    <div class="opciones-mejora">
+      <label class="opcion-mejora">
+        <input type="checkbox" name="formato">
+
+        <span class="opcion-icono icono-formato">
+        <i class="fa-solid fa-align-left"></i>
+      </span>
+
+        <span class="opcion-texto">
+        <strong>Legibilidad y formato</strong>
+        <small>Organiza la estructura e indentación.</small>
+      </span>
+
+        <i class="fa-solid fa-check opcion-check"></i>
+      </label>
+
+      <label class="opcion-mejora">
+        <input type="checkbox" name="buenasPracticas">
+
+        <span class="opcion-icono icono-practicas">
+        <i class="fa-solid fa-shield-halved"></i>
+      </span>
+
+        <span class="opcion-texto">
+        <strong>Buenas prácticas</strong>
+        <small>Aplica convenciones y patrones recomendados.</small>
+      </span>
+
+        <i class="fa-solid fa-check opcion-check"></i>
+      </label>
+
+      <label class="opcion-mejora">
+        <input type="checkbox" name="nombres">
+
+        <span class="opcion-icono icono-nombres">
+        <i class="fa-solid fa-pen-to-square"></i>
+      </span>
+
+        <span class="opcion-texto">
+        <strong>Nombres descriptivos</strong>
+        <small>Mejora los nombres de variables y funciones.</small>
+      </span>
+
+        <i class="fa-solid fa-check opcion-check"></i>
+      </label>
+
+      <label class="opcion-mejora">
+        <input type="checkbox" name="simplificacion">
+
+        <span class="opcion-icono icono-simplificacion">
+        <i class="fa-solid fa-code-branch"></i>
+      </span>
+
+        <span class="opcion-texto">
+        <strong>Simplificar código</strong>
+        <small>Elimina redundancias y lógica innecesaria.</small>
+      </span>
+
+        <i class="fa-solid fa-check opcion-check"></i>
+      </label>
+
+      <label class="opcion-mejora">
+        <input type="checkbox" name="rendimiento">
+
+        <span class="opcion-icono icono-rendimiento">
+        <i class="fa-solid fa-gauge-high"></i>
+      </span>
+
+        <span class="opcion-texto">
+        <strong>Rendimiento</strong>
+        <small>Identifica oportunidades de optimización.</small>
+      </span>
+
+        <i class="fa-solid fa-check opcion-check"></i>
+      </label>
+
+      <label class="opcion-mejora">
+        <input type="checkbox" name="explicaciones">
+
+        <span class="opcion-icono icono-explicaciones">
+        <i class="fa-solid fa-lightbulb"></i>
+      </span>
+
+        <span class="opcion-texto">
+        <strong>Explicar los cambios</strong>
+        <small>Comprende qué cambió y por qué.</small>
+      </span>
+
+        <i class="fa-solid fa-check opcion-check"></i>
+      </label>
+    </div>
+  </section>
+
+
+  <!-- Editores -->
+  <section class="mejora-card editores-card">
+
+    <div class="seccion-titulo">
+      <h2>Editor de código</h2>
+      <p>Compara el código original con la versión mejorada.</p>
+    </div>
+
+    <div class="editor-grid">
+
+      <!-- Código original -->
+      <div class="editor-panel">
+        <div class="editor-header">
+          <span class="status-dot"></span>
+          <h3>Código original</h3>
+          <span class="language-badge">Original</span>
+        </div>
+
+        <div class="editor-contenido">
+
+          <app-codeeditorcomponent
+            [codigo]="codigoOriginal"
+            [lenguaje]="lenguajeSeleccionado"
+            (codigoChange)="codigoOriginal = $event">
+          </app-codeeditorcomponent>
+
+        </div>
+      </div>
+
+      <!-- Código mejorado -->
+      <div class="editor-panel">
+        <div class="editor-header">
+          <span class="status-dot result-dot"></span>
+          <h3>Código mejorado</h3>
+          <span class="language-badge">Resultado</span>
+        </div>
+
+        <div class="editor-contenido">
+
+          <app-codeeditorcomponent
+            [codigo]="codigoMejorado"
+            [lenguaje]="lenguajeSeleccionado"
+            [soloLectura]="true"
+            (codigoChange)="codigoMejorado = $event">
+          </app-codeeditorcomponent>
+
+        </div>
+      </div>
+
+    </div>
+
+    <div class="mejora-actions">
+      <button type="button" class="secondary-button">
+        Limpiar
+      </button>
+
+      <button type="button" class="primary-button">
+        Mejorar código
+        <span aria-hidden="true">→</span>
+      </button>
+    </div>
+
+    <p class="estado-mensaje">
+      La mejora automática estará disponible cuando se integre
+      el procesamiento correspondiente.
+    </p>
+
+  </section>
+
+  <!-- Explicación -->
+  <section class="mejora-card explicacion-card">
+
+    <div class="seccion-titulo">
+      <h2>Explicación de los cambios</h2>
+      <p>Conoce las modificaciones y por qué se realizaron.</p>
+    </div>
+
+    <div class="explicacion-contenido">
+      <p>
+        Aquí se mostrarán las explicaciones de las mejoras
+        cuando el procesamiento esté implementado.
+      </p>
+    </div>
+
+  </section>
+
+</section>

@@ -1,0 +1,18 @@
+/* You can add global styles to this file, and also import other style files */
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+  background-color: #0d0e14;
+}
+
+body {
+  color: #e8e9f2;
+  font-family: Inter, Arial, sans-serif;
+}
+
+app-root {
+  display: block;
+  min-height: 100vh;
+}
