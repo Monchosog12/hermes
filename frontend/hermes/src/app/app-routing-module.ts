@@ -4,6 +4,7 @@ import {Traductorcomponent} from './components/usercomponentes/traductorcomponen
 import {Mejoracodigocomponent} from './components/usercomponentes/mejoracodigocomponent/mejoracodigocomponent';
 import {Historialcomponent} from './components/usercomponentes/historialcomponent/historialcomponent';
 import {Principaladmincomponent} from './components/admincomponents/principaladmincomponent/principaladmincomponent';
+import {Usuariosadmincomponent} from './components/admincomponents/usuariosadmincomponent/usuariosadmincomponent';
 
 const routes: Routes = [
   {
@@ -19,6 +20,7 @@ const routes: Routes = [
     path: 'admin',
     children: [{path: '', redirectTo: 'principaladmin', pathMatch: 'full'},
       {path: 'principaladmin', component: Principaladmincomponent},
+      {path: 'usuarios', component: Usuariosadmincomponent},
     ]
   }
 ];

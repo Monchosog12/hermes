@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { Principaladmincomponent } from './components/admincomponents/principaladmincomponent/principaladmincomponent';
 import { Historialcomponent } from './components/usercomponentes/historialcomponent/historialcomponent';
 import { Headeradmincomponent } from './components/admincomponents/headeradmincomponent/headeradmincomponent';
+import { Usuariosadmincomponent } from './components/admincomponents/usuariosadmincomponent/usuariosadmincomponent';
 @NgModule({
   declarations: [
     App,
@@ -22,6 +23,7 @@ import { Headeradmincomponent } from './components/admincomponents/headeradminco
     Principaladmincomponent,
     Historialcomponent,
     Headeradmincomponent,
+    Usuariosadmincomponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [provideBrowserGlobalErrorListeners()],

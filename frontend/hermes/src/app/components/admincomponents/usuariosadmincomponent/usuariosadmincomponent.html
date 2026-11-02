@@ -1,0 +1,164 @@
+
+<app-headeradmincomponent></app-headeradmincomponent>
+
+<main class="users-page">
+
+  <!-- Encabezado -->
+  <section class="page-heading">
+    <div>
+      <span class="section-eyebrow">ADMINISTRACIÓN</span>
+      <h1>Gestión de usuarios</h1>
+      <p>Consulta y administra los usuarios registrados en Hermes.</p>
+    </div>
+
+    <div class="heading-status">
+      <i class="fa-solid fa-users"></i>
+      <span>Directorio de usuarios</span>
+    </div>
+  </section>
+
+  <!-- Estadísticas -->
+  <section class="users-statistics">
+
+    <article class="stat-card">
+      <div class="stat-icon purple">
+        <i class="fa-solid fa-users"></i>
+      </div>
+      <div>
+        <h2>{{ usuarios.length }}</h2>
+        <p>Usuarios registrados</p>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon green">
+        <i class="fa-solid fa-user-check"></i>
+      </div>
+      <div>
+        <h2>{{ totalActivos }}</h2>
+        <p>Usuarios activos</p>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon orange">
+        <i class="fa-solid fa-user-clock"></i>
+      </div>
+      <div>
+        <h2>{{ totalInactivos }}</h2>
+        <p>Usuarios inactivos</p>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- Directorio -->
+  <section class="users-section">
+
+    <div class="section-heading">
+      <div>
+        <h2>Directorio de usuarios</h2>
+        <p>Listado de cuentas registradas en la plataforma.</p>
+      </div>
+
+      <span class="users-count">
+        {{ usuariosFiltrados.length }} resultados
+      </span>
+    </div>
+
+    <!-- Búsqueda y filtros -->
+    <div class="users-toolbar">
+
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        <input
+          type="text"
+          [(ngModel)]="busqueda"
+          placeholder="Buscar por nombre o correo..."
+        >
+      </div>
+
+      <div class="filter-box">
+        <i class="fa-solid fa-filter"></i>
+
+        <select [(ngModel)]="filtroEstado">
+          <option value="Todos">Todos los estados</option>
+          <option value="Activo">Activos</option>
+          <option value="Inactivo">Inactivos</option>
+        </select>
+      </div>
+
+    </div>
+
+    <!-- Tabla de usuarios -->
+    <div class="users-table-container">
+
+      <table class="users-table">
+
+        <thead>
+        <tr>
+          <th>USUARIO</th>
+          <th>FECHA DE REGISTRO</th>
+          <th>ESTADO</th>
+          <th>ACCIÓN</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr *ngFor="let usuario of usuariosFiltrados">
+
+          <td>
+            <div class="user-information">
+              <div class="user-avatar">
+                {{ usuario.nombre.charAt(0) }}
+              </div>
+
+              <div>
+                <h3>{{ usuario.nombre }}</h3>
+                <p>{{ usuario.correo }}</p>
+              </div>
+            </div>
+          </td>
+
+          <td class="registration-date">
+            {{ usuario.fechaRegistro }}
+          </td>
+
+          <td>
+              <span
+                class="user-status"
+                [ngClass]="usuario.estado === 'Activo' ? 'active' : 'inactive'"
+              >
+                <span class="status-dot"></span>
+                {{ usuario.estado }}
+              </span>
+          </td>
+
+          <td>
+            <button class="view-button" type="button">
+              Ver usuario
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </button>
+          </td>
+
+        </tr>
+
+        <tr *ngIf="usuariosFiltrados.length === 0">
+          <td colspan="4" class="empty-state">
+            <i class="fa-solid fa-user-slash"></i>
+            <h3>No se encontraron usuarios</h3>
+            <p>Prueba con otro nombre, correo o estado.</p>
+          </td>
+        </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+</main>
