@@ -7,6 +7,8 @@ public interface CRUDOperation<T> {
 	
 	public int crear(T dato);
 	
+	public int eliminarPorId(Long id);
+	
 	public int eliminarPorUsername(String username);
 	
 	public List<T> getAll();

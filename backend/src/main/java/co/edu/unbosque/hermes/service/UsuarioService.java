@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import co.edu.unbosque.hermes.dto.UsuarioDTO;
 import co.edu.unbosque.hermes.entity.Usuario;
 import co.edu.unbosque.hermes.repository.UsuarioRepository;
+import co.edu.unbosque.springfirstapp.model.User;
 
 @Service
 public class UsuarioService implements CRUDOperation<UsuarioDTO> {
@@ -80,5 +81,61 @@ public class UsuarioService implements CRUDOperation<UsuarioDTO> {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public int eliminarPorId(Long id) {
+		if(userRepo.existsById(id)) {
+			userRepo.deleteById(id);
+			return 0;
+		}
+		return 1;
+	}
+	
+	/**
+	 * Verifica si un nombre de usuario ya está en uso.
+	 *
+	 * @param newUser Usuario con el nombre de usuario a verificar
+	 * @return true si el nombre de usuario ya está en uso, false en caso contrario
+	 */
+	public boolean findUsernameAlreadyTaken(User newUser) {
+		Optional<Usuario> found = userRepo.findByUsername(newUser.getUsername());
+		if (found.isPresent()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Verifica si un nombre de usuario ya está en uso.
+	 *
+	 * @param username Nombre de usuario a verificar
+	 * @return true si el nombre de usuario ya está en uso, false en caso contrario
+	 */
+	public boolean findUsernameAlreadyTaken(String username) {
+		Optional<Usuario> found = userRepo.findByUsername(username);
+		return found.isPresent();
+	}
+
+	/**
+	 * Valida las credenciales de un usuario.
+	 *
+	 * @param username Nombre de usuario
+	 * @param password Contraseña sin encriptar
+	 * @return 0 si las credenciales son válidas, 1 si son inválidas
+	 */
+	public int validateCredentials(String username, String password) {
+		// Buscar usuario por nombre de usuario
+		Optional<Usuario> userOpt = userRepo.findByUsername(username);
+
+		// Verificar si el usuario existe y la contraseña coincide
+		if (userOpt.isPresent()) {
+			Usuario user = userOpt.get();
+			if (encoder.matches(password, user.getPassword())) {
+				return 0; // Éxito
+			}
+		}
+		return 1; // Credenciales inválidas
 	}
 }
