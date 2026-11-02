@@ -13,6 +13,7 @@ import { Historialcomponent } from './components/usercomponentes/historialcompon
 import { Headeradmincomponent } from './components/admincomponents/headeradmincomponent/headeradmincomponent';
 import { Usuariosadmincomponent } from './components/admincomponents/usuariosadmincomponent/usuariosadmincomponent';
 import { Solicitudesadmincomponent } from './components/admincomponents/solicitudesadmincomponent/solicitudesadmincomponent';
+import { Reportesadmincomponent } from './components/admincomponents/reportesadmincomponent/reportesadmincomponent';
 @NgModule({
   declarations: [
     App,
@@ -26,6 +27,7 @@ import { Solicitudesadmincomponent } from './components/admincomponents/solicitu
     Headeradmincomponent,
     Usuariosadmincomponent,
     Solicitudesadmincomponent,
+    Reportesadmincomponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [provideBrowserGlobalErrorListeners()],

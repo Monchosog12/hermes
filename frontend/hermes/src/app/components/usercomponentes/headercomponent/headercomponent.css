@@ -3,9 +3,6 @@
   display: block;
 }
 
-/* =========================
-   HEADER
-========================= */
 
 .header {
   position: relative;
@@ -17,7 +14,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 32px;
-  background: #0d111d;
+  background: #1A223B;
   border-bottom: 1px solid #292d40;
   box-sizing: border-box;
 }

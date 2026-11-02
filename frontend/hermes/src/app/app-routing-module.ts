@@ -8,6 +8,7 @@ import {Usuariosadmincomponent} from './components/admincomponents/usuariosadmin
 import {
   Solicitudesadmincomponent
 } from './components/admincomponents/solicitudesadmincomponent/solicitudesadmincomponent';
+import {Reportesadmincomponent} from './components/admincomponents/reportesadmincomponent/reportesadmincomponent';
 
 const routes: Routes = [
   {
@@ -25,6 +26,7 @@ const routes: Routes = [
       {path: 'principaladmin', component: Principaladmincomponent},
       {path: 'usuarios', component: Usuariosadmincomponent},
       {path: 'solicitudes', component: Solicitudesadmincomponent},
+      {path: 'reportes', component: Reportesadmincomponent},
     ]
   }
 ];
