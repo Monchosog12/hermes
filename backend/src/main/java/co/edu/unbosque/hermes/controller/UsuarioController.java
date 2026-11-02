@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,6 +37,7 @@ public class UsuarioController {
 	ResponseEntity<String> createNewUser(
 			@Parameter(description = "Datos del nuevo usuario", required = true, schema = @Schema(implementation = UsuarioDTO.class), examples = @ExampleObject(value = """
 					{
+						"email": "nuevoUsuario@correo.com",
 						"username": "nuevoUsuario",
 						"password": "contraseña123",
 						"role": "ADMIN"
@@ -54,6 +56,25 @@ public class UsuarioController {
 		}
 	}
 	
+	@PostMapping("/updateuser")
+	ResponseEntity<String> updateUser(@RequestBody Long id, @RequestBody UsuarioDTO newUser){
+		int status = usuarioService.actualizarUsuarioPorId(id, newUser);
+		if(status == 0) {
+			return new ResponseEntity<String>("Usuario actualizado correctamente", HttpStatus.ACCEPTED);
+		}else {
+			return new ResponseEntity<String>("Error al actualizar usuario, posiblemente el nombre de usuario ya esta en uso", HttpStatus.BAD_REQUEST);
+		}
+	}
+	
+	@DeleteMapping("/deletebyid")
+	ResponseEntity<String> deleteById(@RequestBody Long id){
+		int status = usuarioService.eliminarPorId(id);
+		if(status == 0) {
+			return new ResponseEntity<String>("Usuario eliminado correctamente", HttpStatus.ACCEPTED);
+		}else {
+			return new ResponseEntity<String>("Error al eliminar el usuario", HttpStatus.BAD_REQUEST);
+		}
+	}
 	
 	@GetMapping("/getall")
 	ResponseEntity<List<UsuarioDTO>>getAll(){

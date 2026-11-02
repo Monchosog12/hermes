@@ -25,7 +25,7 @@ public class LoadDataBase {
 			if (found.isPresent()) {
 				log.info("El administrador ya existe, omitiendo la creación del administrador");
 			} else {
-				Usuario adminUser = new Usuario("admin", passwordEncoder.encode("12345678"), Usuario.Rol.ADMIN);
+				Usuario adminUser = new Usuario("admin@hermes.com", "admin", passwordEncoder.encode("12345678"), Usuario.Rol.ADMIN);
 				userRepo.save(adminUser);
 				log.info("Precargando usuario administrador");
 			}
@@ -33,11 +33,10 @@ public class LoadDataBase {
 			if (found2.isPresent()) {
 				log.info("El usuario normal ya existe, omitiendo la creación del usuario normal...");
 			} else {
-				Usuario normalUser = new Usuario("normaluser", passwordEncoder.encode("1234567890"), Usuario.Rol.USER);
+				Usuario normalUser = new Usuario("normaluser@hermes.com", "normaluser", passwordEncoder.encode("1234567890"), Usuario.Rol.USER);
 				userRepo.save(normalUser);
 				log.info("Precargando usuario normal");
 			}
 		};
 	}
-
 }

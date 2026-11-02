@@ -1,23 +1,25 @@
 package co.edu.unbosque.hermes.entity;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "usuario")
-public class Usuario {
+public class Usuario implements UserDetails{
 
 	private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) long id;
 	@Column(unique = true, nullable = false)
@@ -34,10 +36,11 @@ public class Usuario {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Usuario(String username, String password, Rol rol) {
+	public Usuario(String email, String username, String password, Rol rol) {
+		this.email = email;
 		this.username = username;
 		this.password = password;
-		this.rol = Rol.USER;
+		this.rol = rol;
 	}
 
 	public long getId() {
@@ -115,6 +118,11 @@ public class Usuario {
 		return cuentaNoExpirada == other.cuentaNoExpirada && Objects.equals(email, other.email) && id == other.id
 				&& Objects.equals(password, other.password) && rol == other.rol
 				&& Objects.equals(username, other.username);
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));
 	}
 
 }
