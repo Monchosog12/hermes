@@ -2,12 +2,14 @@ import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
-import { Headercomponent } from './components/headercomponent/headercomponent';
-import { Footercomponent } from './components/footercomponent/footercomponent';
-import { Traductorcomponent } from './components/traductorcomponent/traductorcomponent';
-import { Codeeditorcomponent } from './components/codeeditorcomponent/codeeditorcomponent';
-import { Mejoracodigocomponent } from './components/mejoracodigocomponent/mejoracodigocomponent';
-import {FormsModule} from '@angular/forms';
+import { Headercomponent } from './components/usercomponentes/headercomponent/headercomponent';
+import { Footercomponent } from './components/usercomponentes/footercomponent/footercomponent';
+import { Traductorcomponent } from './components/usercomponentes/traductorcomponent/traductorcomponent';
+import { Codeeditorcomponent } from './components/usercomponentes/codeeditorcomponent/codeeditorcomponent';
+import { Mejoracodigocomponent } from './components/usercomponentes/mejoracodigocomponent/mejoracodigocomponent';
+import { FormsModule } from '@angular/forms';
+import { Principaladmincomponent } from './components/admincomponents/principaladmincomponent/principaladmincomponent';
+import { Historialcomponent } from './components/usercomponentes/historialcomponent/historialcomponent';
 @NgModule({
   declarations: [
     App,
@@ -16,6 +18,8 @@ import {FormsModule} from '@angular/forms';
     Traductorcomponent,
     Codeeditorcomponent,
     Mejoracodigocomponent,
+    Principaladmincomponent,
+    Historialcomponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [provideBrowserGlobalErrorListeners()],
