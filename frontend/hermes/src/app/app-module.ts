@@ -10,6 +10,7 @@ import { Mejoracodigocomponent } from './components/usercomponentes/mejoracodigo
 import { FormsModule } from '@angular/forms';
 import { Principaladmincomponent } from './components/admincomponents/principaladmincomponent/principaladmincomponent';
 import { Historialcomponent } from './components/usercomponentes/historialcomponent/historialcomponent';
+import { Headeradmincomponent } from './components/admincomponents/headeradmincomponent/headeradmincomponent';
 @NgModule({
   declarations: [
     App,
@@ -20,6 +21,7 @@ import { Historialcomponent } from './components/usercomponentes/historialcompon
     Mejoracodigocomponent,
     Principaladmincomponent,
     Historialcomponent,
+    Headeradmincomponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [provideBrowserGlobalErrorListeners()],

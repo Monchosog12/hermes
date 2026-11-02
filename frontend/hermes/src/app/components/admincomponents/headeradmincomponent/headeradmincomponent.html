@@ -1,0 +1,114 @@
+<header class="admin-header">
+
+  <!-- LOGOTIPO -->
+  <a routerLink="/admin" class="admin-brand">
+
+    <div class="brand-icon">
+      <i class="fa-solid fa-code"></i>
+    </div>
+
+    <div class="brand-info">
+      <span class="brand-name">Code<span>Shift</span></span>
+      <span class="brand-subtitle">ADMIN PANEL</span>
+    </div>
+
+  </a>
+
+
+  <!-- NAVEGACIÓN -->
+  <nav class="admin-navigation">
+
+    <a routerLink="/admin/principaladmin"
+       routerLinkActive="active"
+       [routerLinkActiveOptions]="{ exact: true }"
+       class="nav-link">
+
+      <i class="fa-solid fa-house"></i>
+      <span>Inicio</span>
+
+    </a>
+
+    <a routerLink="/admin/usuarios"
+       routerLinkActive="active"
+       class="nav-link">
+
+      <i class="fa-solid fa-users"></i>
+      <span>Usuarios</span>
+
+    </a>
+
+    <a routerLink="/admin/solicitudes"
+       routerLinkActive="active"
+       class="nav-link">
+
+      <i class="fa-solid fa-inbox"></i>
+      <span>Solicitudes</span>
+
+    </a>
+
+    <a routerLink="/admin/reportes"
+       routerLinkActive="active"
+       class="nav-link">
+
+      <i class="fa-solid fa-chart-column"></i>
+      <span>Reportes</span>
+
+    </a>
+
+  </nav>
+
+
+  <!-- PERFIL -->
+  <div class="admin-profile">
+
+    <button
+      class="profile-button"
+      type="button"
+      (click)="alternarMenuPerfil()">
+
+      <div class="profile-avatar">
+        <i class="fa-solid fa-user"></i>
+      </div>
+
+      <div class="profile-info">
+        <span class="profile-name">Administrador</span>
+        <span class="profile-role">Super usuario</span>
+      </div>
+
+      <i
+        class="fa-solid fa-chevron-down profile-arrow"
+        [class.rotated]="menuPerfilAbierto">
+      </i>
+
+    </button>
+
+
+    <!-- MENÚ DESPLEGABLE -->
+    <div class="profile-dropdown" *ngIf="menuPerfilAbierto">
+
+      <div class="dropdown-header">
+        <span>Cuenta administrativa</span>
+      </div>
+
+      <button type="button" class="dropdown-item">
+        <i class="fa-regular fa-user"></i>
+        Mi perfil
+      </button>
+
+      <button type="button" class="dropdown-item">
+        <i class="fa-solid fa-gear"></i>
+        Configuración
+      </button>
+
+      <div class="dropdown-divider"></div>
+
+      <button type="button" class="dropdown-item logout">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Cerrar sesión
+      </button>
+
+    </div>
+
+  </div>
+
+</header>
