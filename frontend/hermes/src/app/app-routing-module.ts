@@ -5,6 +5,9 @@ import {Mejoracodigocomponent} from './components/usercomponentes/mejoracodigoco
 import {Historialcomponent} from './components/usercomponentes/historialcomponent/historialcomponent';
 import {Principaladmincomponent} from './components/admincomponents/principaladmincomponent/principaladmincomponent';
 import {Usuariosadmincomponent} from './components/admincomponents/usuariosadmincomponent/usuariosadmincomponent';
+import {
+  Solicitudesadmincomponent
+} from './components/admincomponents/solicitudesadmincomponent/solicitudesadmincomponent';
 
 const routes: Routes = [
   {
@@ -21,6 +24,7 @@ const routes: Routes = [
     children: [{path: '', redirectTo: 'principaladmin', pathMatch: 'full'},
       {path: 'principaladmin', component: Principaladmincomponent},
       {path: 'usuarios', component: Usuariosadmincomponent},
+      {path: 'solicitudes', component: Solicitudesadmincomponent},
     ]
   }
 ];
