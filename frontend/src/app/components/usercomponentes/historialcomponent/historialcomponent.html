@@ -1,0 +1,260 @@
+<section class="historial-page">
+
+  <!-- ENCABEZADO -->
+  <header class="historial-header">
+    <div>
+      <span class="section-eyebrow">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        ACTIVIDAD PERSONAL
+      </span>
+
+      <h1>Historial de descargas</h1>
+
+      <p>
+        Encuentra y consulta los archivos que has generado
+        con las herramientas de CodeShift.
+      </p>
+    </div>
+
+    <div class="header-icon">
+      <i class="fa-solid fa-folder-open"></i>
+    </div>
+  </header>
+
+  <!-- ESTADÍSTICAS -->
+  <div class="estadisticas">
+
+    <article class="stat-card">
+      <div class="stat-icon icon-total">
+        <i class="fa-solid fa-file-arrow-down"></i>
+      </div>
+
+      <div>
+        <span>Total de archivos</span>
+        <h2>{{ archivos.length }}</h2>
+        <small>Descargas registradas</small>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon icon-traducciones">
+        <i class="fa-solid fa-language"></i>
+      </div>
+
+      <div>
+        <span>Traducciones</span>
+        <h2>{{ totalTraducciones }}</h2>
+        <small>Archivos traducidos</small>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon icon-mejoras">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+      </div>
+
+      <div>
+        <span>Mejoras</span>
+        <h2>{{ totalMejoras }}</h2>
+        <small>Códigos optimizados</small>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon icon-lenguajes">
+        <i class="fa-solid fa-code"></i>
+      </div>
+
+      <div>
+        <span>Lenguajes</span>
+        <h2>{{ totalLenguajes }}</h2>
+        <small>Lenguajes utilizados</small>
+      </div>
+    </article>
+
+  </div>
+
+  <!-- FILTROS -->
+  <section class="filtros-section">
+
+    <div class="filtros-heading">
+      <div>
+        <h2>Mis archivos</h2>
+        <p>Consulta tus archivos descargados.</p>
+      </div>
+
+      <span class="resultados-count">
+        {{ archivosFiltrados.length }}
+        resultados
+      </span>
+    </div>
+
+    <div class="filtros-container">
+
+      <div class="buscador">
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        <input
+          type="text"
+          placeholder="Buscar archivo..."
+          [(ngModel)]="busqueda"
+          name="busqueda">
+      </div>
+
+      <div class="filtro-select">
+        <i class="fa-solid fa-code"></i>
+
+        <select
+          [(ngModel)]="filtroLenguaje"
+          name="lenguaje">
+
+          <option value="todos">Todos los lenguajes</option>
+          <option value="Java">Java</option>
+          <option value="JavaScript">JavaScript</option>
+          <option value="Python">Python</option>
+        </select>
+      </div>
+
+      <div class="filtro-select">
+        <i class="fa-solid fa-filter"></i>
+
+        <select
+          [(ngModel)]="filtroOperacion"
+          name="operacion">
+
+          <option value="todas">Todas las operaciones</option>
+          <option value="Traducción">Traducciones</option>
+          <option value="Mejora">Mejoras</option>
+        </select>
+      </div>
+
+      <button
+        class="btn-limpiar"
+        type="button"
+        (click)="limpiarFiltros()">
+
+        <i class="fa-solid fa-rotate-left"></i>
+        Limpiar
+      </button>
+
+    </div>
+  </section>
+
+  <!-- TARJETAS DE ARCHIVOS -->
+  <section class="archivos-grid">
+
+    <article
+      class="archivo-card"
+      *ngFor="let archivo of archivosFiltrados">
+
+      <div class="archivo-card-top">
+
+        <div
+          class="archivo-icon"
+          [ngClass]="{
+            'archivo-java': archivo.lenguaje === 'Java',
+            'archivo-js': archivo.lenguaje === 'JavaScript',
+            'archivo-python': archivo.lenguaje === 'Python'
+          }">
+
+          <i [class]="obtenerIcono(archivo.lenguaje)"></i>
+        </div>
+
+        <span
+          class="operacion-badge"
+          [ngClass]="{
+            'badge-traduccion': archivo.operacion === 'Traducción',
+            'badge-mejora': archivo.operacion === 'Mejora'
+          }">
+
+          <i
+            [class]="archivo.operacion === 'Mejora'
+              ? 'fa-solid fa-wand-magic-sparkles'
+              : 'fa-solid fa-language'">
+          </i>
+
+          {{ archivo.operacion }}
+        </span>
+
+      </div>
+
+      <div class="archivo-info">
+        <h3>
+          {{ archivo.nombre }}{{ archivo.extension }}
+        </h3>
+
+        <span class="archivo-lenguaje">
+          {{ archivo.lenguaje }}
+        </span>
+      </div>
+
+      <div class="archivo-detalles">
+
+        <span>
+          <i class="fa-regular fa-calendar"></i>
+          {{ archivo.fecha }}
+        </span>
+
+        <span>
+          <i class="fa-solid fa-database"></i>
+          {{ archivo.tamano }}
+        </span>
+
+      </div>
+
+      <div class="archivo-card-footer">
+
+        <span class="estado-archivo">
+          <i class="fa-solid fa-circle-check"></i>
+          Disponible
+        </span>
+
+        <button
+          class="btn-descargar"
+          type="button"
+          disabled
+          title="Disponible cuando se implemente la gestión de descargas">
+
+          <i class="fa-solid fa-download"></i>
+          Descargar
+        </button>
+
+      </div>
+
+    </article>
+
+  </section>
+
+  <!-- ESTADO SIN RESULTADOS -->
+  <div
+    class="sin-resultados"
+    *ngIf="archivosFiltrados.length === 0">
+
+    <div class="sin-resultados-icon">
+      <i class="fa-solid fa-folder-open"></i>
+    </div>
+
+    <h3>No encontramos archivos</h3>
+
+    <p>
+      No hay archivos que coincidan con tu búsqueda
+      o con los filtros seleccionados.
+    </p>
+
+    <button
+      type="button"
+      class="btn-limpiar"
+      (click)="limpiarFiltros()">
+
+      Limpiar filtros
+    </button>
+
+  </div>
+
+  <div class="historial-footer">
+    <i class="fa-solid fa-shield-halved"></i>
+    Tus archivos y actividades estarán disponibles
+    desde tu historial personal.
+  </div>
+
+</section>

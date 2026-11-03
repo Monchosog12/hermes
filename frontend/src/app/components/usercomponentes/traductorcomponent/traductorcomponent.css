@@ -22,7 +22,7 @@
 .section-label {
   display: inline-block;
   color: #a797ff;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 2.2px;
 }
@@ -30,7 +30,7 @@
 .translator-heading h1 {
   margin: 18px 0 14px;
   color: #f5f5fb;
-  font-size: clamp(32px, 4vw, 48px);
+  font-size: clamp(67px, 4vw, 48px);
   font-weight: 700;
   letter-spacing: -1.6px;
   line-height: 1.15;
@@ -273,4 +273,14 @@
   .translator-notice {
     text-align: left;
   }
+}
+.textode{
+  background: linear-gradient(to right, #00a5ff, #c441ff);
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-weight: bold;
 }

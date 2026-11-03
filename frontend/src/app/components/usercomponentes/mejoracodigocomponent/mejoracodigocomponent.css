@@ -19,15 +19,15 @@
 
 .section-label {
   color: #a797ff;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 2.2px;
 }
 
 .mejora-heading h1 {
   margin: 16px 0 12px;
   color: #f5f5fb;
-  font-size: clamp(32px, 4vw, 46px);
+  font-size: clamp(67px, 4vw, 46px);
   font-weight: 700;
   letter-spacing: -1.5px;
 }
@@ -561,3 +561,14 @@
     text-align: left;
   }
 }
+.textode{
+  background: linear-gradient(to right, #00a5ff, #c441ff);
+
+  -webkit-background-clip: text;
+  background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-weight: bold;
+}
+

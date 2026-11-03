@@ -5,7 +5,7 @@
   <div class="translator-heading">
     <span class="section-label">CODE TRANSLATION WORKSPACE</span>
 
-    <h1>Tu código, otro lenguaje.</h1>
+    <h1 class="textode">Tu código, otro lenguaje.</h1>
 
     <p>
       Traduce código entre lenguajes de programación desde un espacio
@@ -23,10 +23,12 @@
         id="sourceLanguage"
         [value]="lenguajeOrigen"
         (change)="lenguajeOrigen = $any($event.target).value">
+
         <option value="javascript">JavaScript</option>
         <option value="java">Java</option>
         <option value="python">Python</option>
       </select>
+
     </div>
 
     <button
