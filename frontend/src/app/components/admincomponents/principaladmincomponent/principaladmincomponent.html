@@ -1,0 +1,340 @@
+<app-headeradmincomponent></app-headeradmincomponent>
+<main class="admin-page">
+
+  <!-- ENCABEZADO -->
+  <section class="dashboard-heading">
+
+    <div>
+      <span class="section-eyebrow">CENTRO DE CONTROL</span>
+
+      <h1>Bienvenido, Administrador</h1>
+
+      <p>
+        Aquí puedes consultar el estado general de la plataforma CodeShift.
+      </p>
+    </div>
+
+    <div class="system-status">
+      <span class="status-indicator"></span>
+      Sistema activo
+    </div>
+
+  </section>
+
+
+  <!-- ESTADÍSTICAS -->
+  <section class="statistics-section">
+
+    <div class="section-title">
+      <div>
+        <h2>Resumen general</h2>
+        <p>Indicadores principales de la plataforma</p>
+      </div>
+    </div>
+
+    <div class="statistics-grid">
+
+      <article
+        class="stat-card"
+        *ngFor="let estadistica of estadisticas"
+      >
+
+        <div class="stat-card-top">
+
+          <div class="stat-icon" [ngClass]="estadistica.color">
+            <i [class]="estadistica.icono"></i>
+          </div>
+
+          <span
+            class="stat-variation"
+            *ngIf="estadistica.variacion"
+            [ngClass]="estadistica.color"
+          >
+            {{ estadistica.variacion }}
+          </span>
+
+        </div>
+
+        <div class="stat-information">
+
+          <h3>{{ estadistica.valor | number }}</h3>
+
+          <p>{{ estadistica.titulo }}</p>
+
+          <span>{{ estadistica.descripcion }}</span>
+
+        </div>
+
+      </article>
+
+    </div>
+
+  </section>
+
+
+  <!-- RESUMEN Y GRÁFICAS -->
+  <section class="dashboard-content">
+
+    <!-- RESUMEN DE SOLICITUDES -->
+    <article class="dashboard-card requests-card">
+
+      <div class="card-heading">
+        <div>
+          <h2>Estado de solicitudes</h2>
+          <p>Distribución de las solicitudes recibidas</p>
+        </div>
+
+        <div class="heading-icon">
+          <i class="fa-solid fa-chart-pie"></i>
+        </div>
+      </div>
+
+      <div class="requests-total">
+        <h3>{{ totalSolicitudes }}</h3>
+        <span>Solicitudes totales</span>
+      </div>
+
+      <div class="requests-progress">
+
+        <div class="progress-track">
+          <div
+            class="progress-attended"
+            [style.width.%]="obtenerPorcentaje(solicitudesAtendidas)"
+          ></div>
+
+          <div
+            class="progress-pending"
+            [style.width.%]="obtenerPorcentaje(solicitudesPendientes)"
+          ></div>
+        </div>
+
+      </div>
+
+      <div class="request-legend">
+
+        <div class="legend-item">
+          <div class="legend-label">
+            <span class="legend-dot attended"></span>
+            <span>Atendidas</span>
+          </div>
+
+          <strong>{{ solicitudesAtendidas }}</strong>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-label">
+            <span class="legend-dot pending"></span>
+            <span>Pendientes</span>
+          </div>
+
+          <strong>{{ solicitudesPendientes }}</strong>
+        </div>
+
+      </div>
+
+      <div class="completion-rate">
+        <div>
+          <span>Porcentaje de atención</span>
+          <strong>
+            {{ obtenerPorcentaje(solicitudesAtendidas) | number:'1.1-1' }}%
+          </strong>
+        </div>
+      </div>
+
+    </article>
+
+
+    <!-- GRÁFICA DE ACTIVIDAD -->
+    <article class="dashboard-card chart-card">
+
+      <div class="card-heading">
+
+        <div>
+          <h2>Actividad de la plataforma</h2>
+          <p>Usuarios y solicitudes durante los últimos meses</p>
+        </div>
+
+        <div class="heading-icon">
+          <i class="fa-solid fa-chart-column"></i>
+        </div>
+
+      </div>
+
+      <div class="chart-legend">
+
+        <span>
+          <i class="legend-dot users"></i>
+          Usuarios
+        </span>
+
+        <span>
+          <i class="legend-dot requests"></i>
+          Solicitudes
+        </span>
+
+      </div>
+
+      <div class="chart-container">
+
+        <div class="chart-y-axis">
+          <span>100</span>
+          <span>75</span>
+          <span>50</span>
+          <span>25</span>
+          <span>0</span>
+        </div>
+
+        <div class="chart-content">
+
+          <div class="chart-grid-lines">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+          <div class="chart-columns">
+
+            <div
+              class="chart-column"
+              *ngFor="let dato of datosGrafica"
+            >
+
+              <div class="bar-group">
+
+                <div
+                  class="chart-bar users-bar"
+                  [style.height]="obtenerAltura(dato.usuarios)"
+                  [title]="'Usuarios: ' + dato.usuarios"
+                ></div>
+
+                <div
+                  class="chart-bar requests-bar"
+                  [style.height]="obtenerAltura(dato.solicitudes)"
+                  [title]="'Solicitudes: ' + dato.solicitudes"
+                ></div>
+
+              </div>
+
+              <span class="chart-label">
+                {{ dato.periodo }}
+              </span>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </article>
+
+  </section>
+
+
+  <!-- ACTIVIDAD RECIENTE -->
+  <section class="dashboard-card activity-card">
+
+    <div class="card-heading">
+
+      <div>
+        <h2>Actividad reciente</h2>
+        <p>Últimos movimientos registrados en la plataforma</p>
+      </div>
+
+      <span class="activity-count">
+        {{ actividadesRecientes.length }} actividades
+      </span>
+
+    </div>
+
+    <div class="activity-list">
+
+      <article
+        class="activity-item"
+        *ngFor="let actividad of actividadesRecientes"
+      >
+
+        <div class="activity-icon" [ngClass]="actividad.tipo">
+          <i [class]="actividad.icono"></i>
+        </div>
+
+        <div class="activity-information">
+
+          <h3>{{ actividad.titulo }}</h3>
+
+          <p>{{ actividad.descripcion }}</p>
+
+        </div>
+
+        <span class="activity-date">
+          {{ actividad.fecha }}
+        </span>
+
+      </article>
+
+    </div>
+
+  </section>
+
+
+  <!-- ACCESOS RÁPIDOS -->
+  <section class="quick-access-section">
+
+    <div class="section-title">
+      <div>
+        <h2>Accesos rápidos</h2>
+        <p>Accede a los principales módulos administrativos</p>
+      </div>
+    </div>
+
+    <div class="quick-access-grid">
+
+      <article class="quick-access-card">
+        <div class="quick-icon purple">
+          <i class="fa-solid fa-users"></i>
+        </div>
+
+        <div>
+          <h3>Gestión de usuarios</h3>
+          <p>Consulta los usuarios registrados.</p>
+        </div>
+
+        <i class="fa-solid fa-arrow-right quick-arrow"></i>
+      </article>
+
+
+      <article class="quick-access-card">
+        <div class="quick-icon blue">
+          <i class="fa-solid fa-inbox"></i>
+        </div>
+
+        <div>
+          <h3>Solicitudes</h3>
+          <p>Revisa las solicitudes recibidas.</p>
+        </div>
+
+        <i class="fa-solid fa-arrow-right quick-arrow"></i>
+      </article>
+
+
+      <article class="quick-access-card">
+        <div class="quick-icon green">
+          <i class="fa-solid fa-chart-line"></i>
+        </div>
+
+        <div>
+          <h3>Generar reportes</h3>
+          <p>Consulta y genera informes.</p>
+        </div>
+
+        <i class="fa-solid fa-arrow-right quick-arrow"></i>
+      </article>
+
+    </div>
+
+  </section>
+
+</main>

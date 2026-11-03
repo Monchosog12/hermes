@@ -1,0 +1,177 @@
+
+<app-headeradmincomponent></app-headeradmincomponent>
+
+<main class="requests-page">
+
+  <!-- Encabezado -->
+  <section class="page-heading">
+    <div>
+      <span class="section-eyebrow">ADMINISTRACIÓN</span>
+      <h1>Gestión de solicitudes</h1>
+      <p>Consulta y administra las solicitudes enviadas por los usuarios.</p>
+    </div>
+
+    <div class="heading-status">
+      <i class="fa-solid fa-inbox"></i>
+      <span>Centro de solicitudes</span>
+    </div>
+  </section>
+
+  <!-- Estadísticas -->
+  <section class="requests-statistics">
+
+    <article class="stat-card">
+      <div class="stat-icon purple">
+        <i class="fa-solid fa-file-lines"></i>
+      </div>
+      <div>
+        <h2>{{ solicitudes.length }}</h2>
+        <p>Total de solicitudes</p>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon orange">
+        <i class="fa-solid fa-clock"></i>
+      </div>
+      <div>
+        <h2>{{ totalPendientes }}</h2>
+        <p>Pendientes</p>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon blue">
+        <i class="fa-solid fa-spinner"></i>
+      </div>
+      <div>
+        <h2>{{ totalEnProceso }}</h2>
+        <p>En proceso</p>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon green">
+        <i class="fa-solid fa-circle-check"></i>
+      </div>
+      <div>
+        <h2>{{ totalAtendidas }}</h2>
+        <p>Atendidas</p>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- Listado -->
+  <section class="requests-section">
+
+    <div class="section-heading">
+      <div>
+        <h2>Listado de solicitudes</h2>
+        <p>Revisa las solicitudes registradas en la plataforma.</p>
+      </div>
+
+      <span class="requests-count">
+        {{ solicitudesFiltradas.length }} resultados
+      </span>
+    </div>
+
+    <!-- Búsqueda y filtros -->
+    <div class="requests-toolbar">
+
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        <input
+          type="text"
+          [(ngModel)]="busqueda"
+          placeholder="Buscar por usuario o tipo de solicitud..."
+        >
+      </div>
+
+      <div class="filter-box">
+        <i class="fa-solid fa-filter"></i>
+
+        <select [(ngModel)]="filtroEstado">
+          <option value="Todas">Todos los estados</option>
+          <option value="Pendiente">Pendientes</option>
+          <option value="En proceso">En proceso</option>
+          <option value="Atendida">Atendidas</option>
+        </select>
+      </div>
+
+    </div>
+
+    <!-- Tabla -->
+    <div class="requests-table-container">
+
+      <table class="requests-table">
+
+        <thead>
+        <tr>
+          <th>SOLICITUD</th>
+          <th>USUARIO</th>
+          <th>FECHA</th>
+          <th>ESTADO</th>
+          <th>ACCIÓN</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr *ngFor="let solicitud of solicitudesFiltradas">
+
+          <td>
+            <div class="request-information">
+              <span class="request-id">#{{ solicitud.id }}</span>
+              <h3>{{ solicitud.tipo }}</h3>
+            </div>
+          </td>
+
+          <td>
+            <div class="user-information">
+              <h3>{{ solicitud.usuario }}</h3>
+              <p>{{ solicitud.correo }}</p>
+            </div>
+          </td>
+
+          <td class="request-date">
+            {{ solicitud.fecha }}
+          </td>
+
+          <td>
+              <span
+                class="request-status"
+                [ngClass]="obtenerClaseEstado(solicitud.estado)"
+              >
+                <span class="status-dot"></span>
+                {{ solicitud.estado }}
+              </span>
+          </td>
+
+          <td>
+            <button class="view-button" type="button">
+              Ver detalle
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </td>
+
+        </tr>
+
+        <tr *ngIf="solicitudesFiltradas.length === 0">
+          <td colspan="5" class="empty-state">
+            <i class="fa-solid fa-folder-open"></i>
+            <h3>No se encontraron solicitudes</h3>
+            <p>Prueba modificando los términos de búsqueda o el filtro.</p>
+          </td>
+        </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+</main>

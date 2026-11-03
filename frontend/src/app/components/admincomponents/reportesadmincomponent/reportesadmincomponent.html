@@ -1,0 +1,215 @@
+
+<app-headeradmincomponent></app-headeradmincomponent>
+
+<main class="reports-page">
+
+  <section class="page-heading">
+    <div>
+      <span class="eyebrow">CENTRO DE ADMINISTRACIÓN</span>
+      <h1>Reportes y estadísticas</h1>
+      <p>Consulta el comportamiento de la plataforma y genera reportes de gestión.</p>
+    </div>
+
+    <div class="report-date">
+      <i class="fa-regular fa-calendar"></i>
+      <span>Resumen general</span>
+    </div>
+  </section>
+
+  <!-- RESUMEN GENERAL -->
+  <section class="stats-grid">
+
+    <article class="stat-card">
+      <div class="stat-icon users-icon">
+        <i class="fa-solid fa-users"></i>
+      </div>
+      <div>
+        <span class="stat-label">Total de usuarios</span>
+        <h2>{{ totalUsuarios }}</h2>
+        <small>{{ usuariosActivos }} usuarios activos</small>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon requests-icon">
+        <i class="fa-solid fa-file-lines"></i>
+      </div>
+      <div>
+        <span class="stat-label">Total de solicitudes</span>
+        <h2>{{ totalSolicitudes }}</h2>
+        <small>Solicitudes registradas</small>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon pending-icon">
+        <i class="fa-solid fa-clock"></i>
+      </div>
+      <div>
+        <span class="stat-label">Pendientes</span>
+        <h2>{{ solicitudesPendientes }}</h2>
+        <small>Requieren atención</small>
+      </div>
+    </article>
+
+    <article class="stat-card">
+      <div class="stat-icon completed-icon">
+        <i class="fa-solid fa-circle-check"></i>
+      </div>
+      <div>
+        <span class="stat-label">Atendidas</span>
+        <h2>{{ solicitudesAtendidas }}</h2>
+        <small>Solicitudes completadas</small>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- GRÁFICOS -->
+  <section class="charts-grid">
+
+    <!-- ESTADOS DE SOLICITUDES -->
+    <article class="report-card">
+      <div class="card-heading">
+        <div>
+          <h3>Estado de las solicitudes</h3>
+          <p>Distribución según su estado actual</p>
+        </div>
+        <i class="fa-solid fa-chart-pie heading-icon"></i>
+      </div>
+
+      <div class="status-chart-container">
+
+        <div
+          class="donut-chart"
+          [style.background]="
+            'conic-gradient(' +
+            '#8b70ed 0% ' + porcentajePendientes + '%, ' +
+            '#4b9ce5 ' + porcentajePendientes + '% ' +
+            (porcentajePendientes + porcentajeEnProceso) + '%, ' +
+            '#36bd91 ' + (porcentajePendientes + porcentajeEnProceso) + '% 100%)'
+          "
+        >
+          <div class="donut-inner">
+            <strong>{{ totalSolicitudes }}</strong>
+            <span>Solicitudes</span>
+          </div>
+        </div>
+
+        <div class="chart-legend">
+          <div class="legend-item">
+            <span class="legend-dot pending-dot"></span>
+            <div>
+              <span>Pendientes</span>
+              <strong>{{ solicitudesPendientes }}</strong>
+            </div>
+          </div>
+
+          <div class="legend-item">
+            <span class="legend-dot progress-dot"></span>
+            <div>
+              <span>En proceso</span>
+              <strong>{{ solicitudesEnProceso }}</strong>
+            </div>
+          </div>
+
+          <div class="legend-item">
+            <span class="legend-dot completed-dot"></span>
+            <div>
+              <span>Atendidas</span>
+              <strong>{{ solicitudesAtendidas }}</strong>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </article>
+
+    <!-- SOLICITUDES POR MES -->
+    <article class="report-card">
+      <div class="card-heading">
+        <div>
+          <h3>Actividad mensual</h3>
+          <p>Cantidad de solicitudes registradas por mes</p>
+        </div>
+        <i class="fa-solid fa-chart-column heading-icon"></i>
+      </div>
+
+      <div class="bar-chart">
+        <div class="chart-y-labels">
+          <span>45</span>
+          <span>30</span>
+          <span>15</span>
+          <span>0</span>
+        </div>
+
+        <div class="bars-container">
+          <div class="bar-column" *ngFor="let item of estadisticasMensuales">
+            <span class="bar-value">{{ item.cantidad }}</span>
+
+            <div class="bar-track">
+              <div
+                class="bar-fill"
+                [style.height.%]="obtenerAlturaBarra(item.cantidad)"
+              ></div>
+            </div>
+
+            <span class="bar-month">{{ item.mes }}</span>
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- DESCARGA DE REPORTES -->
+  <section class="downloads-section">
+
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">EXPORTACIÓN DE INFORMACIÓN</span>
+        <h2>Generar reportes</h2>
+        <p>Descarga información organizada para su consulta y análisis.</p>
+      </div>
+    </div>
+
+    <div class="downloads-grid">
+
+      <article class="download-card">
+        <div class="download-icon users-icon">
+          <i class="fa-solid fa-users"></i>
+        </div>
+
+        <div class="download-info">
+          <h3>Reporte de usuarios</h3>
+          <p>Listado de usuarios, correos, fechas de registro y estado de sus cuentas.</p>
+          <span>{{ totalUsuarios }} registros disponibles</span>
+        </div>
+
+        <button class="download-button" (click)="descargarReporteUsuarios()">
+          <i class="fa-solid fa-download"></i>
+          Descargar CSV
+        </button>
+      </article>
+
+      <article class="download-card">
+        <div class="download-icon requests-icon">
+          <i class="fa-solid fa-file-lines"></i>
+        </div>
+
+        <div class="download-info">
+          <h3>Reporte de solicitudes</h3>
+          <p>Listado de solicitudes, usuarios asociados, fechas y estados de atención.</p>
+          <span>{{ totalSolicitudes }} registros disponibles</span>
+        </div>
+
+        <button class="download-button" (click)="descargarReporteSolicitudes()">
+          <i class="fa-solid fa-download"></i>
+          Descargar CSV
+        </button>
+      </article>
+
+    </div>
+  </section>
+
+</main>
