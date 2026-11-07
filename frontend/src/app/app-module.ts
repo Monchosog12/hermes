@@ -8,6 +8,7 @@ import { Traductorcomponent } from './components/usercomponentes/traductorcompon
 import { Codeeditorcomponent } from './components/usercomponentes/codeeditorcomponent/codeeditorcomponent';
 import { Mejoracodigocomponent } from './components/usercomponentes/mejoracodigocomponent/mejoracodigocomponent';
 import { FormsModule } from '@angular/forms';
+import { provideHttpClient } from '@angular/common/http';
 import { Principaladmincomponent } from './components/admincomponents/principaladmincomponent/principaladmincomponent';
 import { Historialcomponent } from './components/usercomponentes/historialcomponent/historialcomponent';
 import { Headeradmincomponent } from './components/admincomponents/headeradmincomponent/headeradmincomponent';
@@ -30,7 +31,7 @@ import { Reportesadmincomponent } from './components/admincomponents/reportesadm
     Reportesadmincomponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
-  providers: [provideBrowserGlobalErrorListeners()],
+  providers: [provideBrowserGlobalErrorListeners(), provideHttpClient()],
   bootstrap: [App],
 })
 export class AppModule {}

@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -19,9 +20,9 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "usuario")
-public class Usuario implements UserDetails{
+public class Usuario implements UserDetails {
 
-	private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) long id;
+	private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
 	@Column(unique = true, nullable = false)
 	private String email;
 	@Column(nullable = false)
@@ -31,7 +32,9 @@ public class Usuario implements UserDetails{
 	@Enumerated(EnumType.STRING)
 	private Rol rol;
 	private boolean cuentaNoExpirada;
-	
+	@ElementCollection
+	private Traduccion traduccion[];
+
 	public Usuario() {
 		// TODO Auto-generated constructor stub
 	}
@@ -43,11 +46,11 @@ public class Usuario implements UserDetails{
 		this.rol = rol;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -91,6 +94,14 @@ public class Usuario implements UserDetails{
 		this.cuentaNoExpirada = cuentaNoExpirada;
 	}
 
+	public Traduccion[] getTraduccion() {
+		return traduccion;
+	}
+
+	public void setTraduccion(Traduccion[] traduccion) {
+		this.traduccion = traduccion;
+	}
+
 	public enum Rol {
 		ADMIN, USER
 	}
@@ -98,12 +109,12 @@ public class Usuario implements UserDetails{
 	@Override
 	public String toString() {
 		return "Usuario [id=" + id + ", email=" + email + ", userName=" + username + ", password=" + password + ", rol="
-				+ rol + ", cuentaNoExpirada=" + cuentaNoExpirada + "]";
+				+ rol + ", cuentaNoExpirada=" + cuentaNoExpirada + ", Traduccion=" + traduccion + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(Boolean.valueOf(cuentaNoExpirada), email, Long.valueOf(id), password, rol, username);
+		return Objects.hash(email, Long.valueOf(id), password, rol, username, traduccion);
 	}
 
 	@Override
