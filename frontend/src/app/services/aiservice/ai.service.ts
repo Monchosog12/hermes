@@ -3,7 +3,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { errorMessage } from '../http/errors';
-import { ModelInfo, ProcessRequest, ProcessResponse } from '../models/ai.models';
+import { ModelInfo, ProcessRequest, ProcessResponse } from '../models/aiservice.models';
 
 @Injectable({ providedIn: 'root' })
 export class AiService {

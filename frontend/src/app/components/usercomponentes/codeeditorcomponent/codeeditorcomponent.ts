@@ -1,20 +1,7 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ElementRef,
-  OnDestroy,
-  afterNextRender,
-  effect,
-  input,
-  model,
-  output,
-  signal,
-  viewChild,
-} from '@angular/core';
 import type { Compartment, Extension } from '@codemirror/state';
 import type { EditorView } from '@codemirror/view';
-import { LANGUAGES, loadLanguageExtension } from '../../../core/ai/languages';
-import { LanguageCode } from '../../../core/models/ai.models';
+import { LANGUAGES, loadLanguageExtension } from '../../../models/languages';
+import { LanguageCode } from '../../../models/aiservice.models.ts';
 import { LoadedSource, readSourceFile } from '../../../core/files/source-file';
 
 const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace";
