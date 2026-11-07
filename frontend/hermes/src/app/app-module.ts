@@ -7,7 +7,7 @@ import { Footercomponent } from './components/usercomponentes/footercomponent/fo
 import { Traductorcomponent } from './components/usercomponentes/traductorcomponent/traductorcomponent';
 import { Codeeditorcomponent } from './components/usercomponentes/codeeditorcomponent/codeeditorcomponent';
 import { Mejoracodigocomponent } from './components/usercomponentes/mejoracodigocomponent/mejoracodigocomponent';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Principaladmincomponent } from './components/admincomponents/principaladmincomponent/principaladmincomponent';
 import { Historialcomponent } from './components/usercomponentes/historialcomponent/historialcomponent';
 import { Headeradmincomponent } from './components/admincomponents/headeradmincomponent/headeradmincomponent';
@@ -29,7 +29,7 @@ import { Reportesadmincomponent } from './components/admincomponents/reportesadm
     Solicitudesadmincomponent,
     Reportesadmincomponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, FormsModule],
+  imports: [BrowserModule, AppRoutingModule, FormsModule, ReactiveFormsModule],
   providers: [provideBrowserGlobalErrorListeners()],
   bootstrap: [App],
 })

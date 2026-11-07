@@ -12,7 +12,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Controller
 @RequestMapping("/user")
+<<<<<<< Updated upstream
 @CrossOrigin(origins = {"http://localhost:8080", "http://localhost:8081"})
+=======
+@CrossOrigin(origins = { "http://localhost:8080", "http://localhost:4200" })
+>>>>>>> Stashed changes
 @Transactional
 @Tag(name = "Gestión de Usuarios", description = "Endpoints para administrar usuarios")
 @SecurityRequirement(name = "bearerAuth")
