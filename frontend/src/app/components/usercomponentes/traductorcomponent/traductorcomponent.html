@@ -24,9 +24,9 @@
         [value]="lenguajeOrigen"
         (change)="lenguajeOrigen = $any($event.target).value">
 
-        <option value="javascript">JavaScript</option>
-        <option value="java">Java</option>
-        <option value="python">Python</option>
+        <option value="JAVASCRIPT">JavaScript</option>
+        <option value="JAVA">Java</option>
+        <option value="PYTHON">Python</option>
       </select>
 
     </div>
@@ -46,9 +46,9 @@
         id="targetLanguage"
         [value]="lenguajeDestino"
         (change)="lenguajeDestino = $any($event.target).value">
-        <option value="javascript">JavaScript</option>
-        <option value="java">Java</option>
-        <option value="python">Python</option>
+        <option value="JAVASCRIPT">JavaScript</option>
+        <option value="JAVA">Java</option>
+        <option value="PYTHON">Python</option>
       </select>
     </div>
 
@@ -64,9 +64,8 @@
       </div>
 
       <app-codeeditorcomponent
-        [codigo]="codigoOrigen"
-        [lenguaje]="lenguajeOrigen"
-        (codigoChange)="codigoOrigen = $event">
+        [(value)]="codigoOrigen"
+        [language]="lenguajeOrigen">
       </app-codeeditorcomponent>
     </section>
 
@@ -78,9 +77,8 @@
       </div>
 
       <app-codeeditorcomponent
-        [codigo]="codigoDestino"
-        [lenguaje]="lenguajeDestino"
-        (codigoChange)="codigoDestino = $event">
+        [(value)]="codigoDestino"
+        [language]="lenguajeDestino">
       </app-codeeditorcomponent>
     </section>
 

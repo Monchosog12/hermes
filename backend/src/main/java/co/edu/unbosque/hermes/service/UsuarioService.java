@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import co.edu.unbosque.hermes.dto.UsuarioDTO;
 import co.edu.unbosque.hermes.entity.Usuario;
 import co.edu.unbosque.hermes.repository.UsuarioRepository;
-import co.edu.unbosque.springfirstapp.model.User;
 
 @Service
 public class UsuarioService implements CRUDOperation<UsuarioDTO> {
@@ -98,7 +97,7 @@ public class UsuarioService implements CRUDOperation<UsuarioDTO> {
 	 * @param newUser Usuario con el nombre de usuario a verificar
 	 * @return true si el nombre de usuario ya está en uso, false en caso contrario
 	 */
-	public boolean findUsernameAlreadyTaken(User newUser) {
+	public boolean findUsernameAlreadyTaken(Usuario newUser) {
 		Optional<Usuario> found = userRepo.findByUsername(newUser.getUsername());
 		if (found.isPresent()) {
 			return true;
