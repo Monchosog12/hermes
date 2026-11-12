@@ -9,7 +9,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -22,6 +21,10 @@ import jakarta.persistence.Table;
 @Table(name = "usuario")
 public class Usuario implements UserDetails {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
 	@Column(unique = true, nullable = false)
 	private String email;
@@ -32,8 +35,6 @@ public class Usuario implements UserDetails {
 	@Enumerated(EnumType.STRING)
 	private Rol rol;
 	private boolean cuentaNoExpirada;
-	@ElementCollection
-	private Traduccion traduccion[];
 
 	public Usuario() {
 		// TODO Auto-generated constructor stub
@@ -94,27 +95,19 @@ public class Usuario implements UserDetails {
 		this.cuentaNoExpirada = cuentaNoExpirada;
 	}
 
-	public Traduccion[] getTraduccion() {
-		return traduccion;
-	}
-
-	public void setTraduccion(Traduccion[] traduccion) {
-		this.traduccion = traduccion;
-	}
-
 	public enum Rol {
 		ADMIN, USER
 	}
 
 	@Override
 	public String toString() {
-		return "Usuario [id=" + id + ", email=" + email + ", userName=" + username + ", password=" + password + ", rol="
-				+ rol + ", cuentaNoExpirada=" + cuentaNoExpirada + ", Traduccion=" + traduccion + "]";
+		return "Usuario [id=" + id + ", email=" + email + ", username=" + username + ", password=" + password + ", rol="
+				+ rol + ", cuentaNoExpirada=" + cuentaNoExpirada + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(email, Long.valueOf(id), password, rol, username, traduccion);
+		return Objects.hash(Boolean.valueOf(cuentaNoExpirada), email, id, password, rol, username);
 	}
 
 	@Override
@@ -126,13 +119,17 @@ public class Usuario implements UserDetails {
 		if (getClass() != obj.getClass())
 			return false;
 		Usuario other = (Usuario) obj;
-		return cuentaNoExpirada == other.cuentaNoExpirada && Objects.equals(email, other.email) && id == other.id
-				&& Objects.equals(password, other.password) && rol == other.rol
+		return cuentaNoExpirada == other.cuentaNoExpirada && Objects.equals(email, other.email)
+				&& Objects.equals(id, other.id) && Objects.equals(password, other.password) && rol == other.rol
 				&& Objects.equals(username, other.username);
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
+		// Evita NullPointerException con usuarios antiguos guardados sin rol
+		if (rol == null) {
+			return List.of();
+		}
 		return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));
 	}
 

@@ -26,14 +26,14 @@ public class UsuarioService implements CRUDOperation<UsuarioDTO> {
 	public int crear(UsuarioDTO dato) {
 		Usuario usuario = mapper.map(dato, Usuario.class);
 		usuario.setPassword(encoder.encode(usuario.getPassword()));
-		if (usuario.getRol() != null) {
-			usuario.setRol(dato.getRol());
+		// Si no se envia rol, se asigna USER por defecto (rol null rompe getAuthorities())
+		if (usuario.getRol() == null) {
+			usuario.setRol(Usuario.Rol.USER);
 		}
 		userRepo.save(usuario);
 		return 0;
 	}
 
-	@Override
 	public int eliminarPorUsername(String username) {
 		Optional<Usuario> usuario = userRepo.searchByUsername(username);
 		if (usuario.isPresent()) {
@@ -56,7 +56,7 @@ public class UsuarioService implements CRUDOperation<UsuarioDTO> {
 	}
 	
 	@Override
-	public int actualizarUsuarioPorId(Long id, UsuarioDTO nuevoDato) {
+	public int actualizarPorId(Long id, UsuarioDTO nuevoDato) {
 		Optional<Usuario> found = userRepo.findById(id);
 		Optional<Usuario> newFound = userRepo.searchByUsername(nuevoDato.getUsername());
 		if (found.isPresent() && !newFound.isPresent()) {
