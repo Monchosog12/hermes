@@ -46,9 +46,9 @@
           [(ngModel)]="lenguajeSeleccionado"
           name="lenguaje">
 
-          <option value="javascript">JavaScript</option>
-          <option value="java">Java</option>
-          <option value="python">Python</option>
+          <option value="JAVASCRIPT">JavaScript</option>
+          <option value="JAVA">Java</option>
+          <option value="PYTHON">Python</option>
         </select>
 
         <i class="fa-solid fa-chevron-down select-flecha"></i>
@@ -179,9 +179,8 @@
         <div class="editor-contenido">
 
           <app-codeeditorcomponent
-            [codigo]="codigoOriginal"
-            [lenguaje]="lenguajeSeleccionado"
-            (codigoChange)="codigoOriginal = $event">
+            [(value)]="codigoOriginal"
+            [language]="lenguajeSeleccionado">
           </app-codeeditorcomponent>
 
         </div>
@@ -198,10 +197,9 @@
         <div class="editor-contenido">
 
           <app-codeeditorcomponent
-            [codigo]="codigoMejorado"
-            [lenguaje]="lenguajeSeleccionado"
-            [soloLectura]="true"
-            (codigoChange)="codigoMejorado = $event">
+            [(value)]="codigoMejorado"
+            [language]="lenguajeSeleccionado"
+            [readOnly]="true">
           </app-codeeditorcomponent>
 
         </div>

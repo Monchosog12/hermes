@@ -1,169 +1,160 @@
-
 import {
-  AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
-  EventEmitter,
-  Input,
-  OnChanges,
   OnDestroy,
-  Output,
-  SimpleChanges,
-  ViewChild
+  afterNextRender,
+  effect,
+  inject,
+  input,
+  model,
+  output,
+  signal,
+  viewChild,
 } from '@angular/core';
+import type { Compartment, Extension } from '@codemirror/state';
+import type { EditorView } from '@codemirror/view';
+import { LanguageCode } from '../../../models/ai/ai.models';
+import { LoadedSource } from '../../../models/files/files.models';
+import { LanguageService } from '../../../services/languages/language.service';
+import { SourceFileService } from '../../../services/files/source-file.service';
 
-import { basicSetup } from 'codemirror';
-import { EditorState, Compartment } from '@codemirror/state';
-import { EditorView } from '@codemirror/view';
 
-import { javascript } from '@codemirror/lang-javascript';
-import { java } from '@codemirror/lang-java';
-import { python } from '@codemirror/lang-python';
-import { syntaxHighlighting, defaultHighlightStyle } from '@codemirror/language';
+const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace";
 
-type Lenguaje = 'javascript' | 'java' | 'python';
+interface CodeMirrorKit {
+  EditorView: typeof import('codemirror').EditorView;
+  basicSetup: typeof import('codemirror').basicSetup;
+  EditorState: typeof import('@codemirror/state').EditorState;
+  languageSlot: Compartment;
+  editableSlot: Compartment;
+}
+
 
 @Component({
   selector: 'app-codeeditorcomponent',
   standalone: false,
-  styleUrl: './codeeditorcomponent.css',
   templateUrl: './codeeditorcomponent.html',
+  styleUrl: './codeeditorcomponent.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Codeeditorcomponent
-  implements AfterViewInit, OnChanges, OnDestroy {
+export class Codeeditorcomponent implements OnDestroy {
 
-  @ViewChild('editorHost')
-  editorHost!: ElementRef<HTMLDivElement>;
+  private readonly languageService = inject(LanguageService);
+  private readonly sourceFileService = inject(SourceFileService);
 
-  @Input() codigo = '';
-  @Input() lenguaje: Lenguaje = 'javascript';
-  @Input() soloLectura = false;
+  readonly value = model('');
+  readonly language = input.required<LanguageCode>();
+  readonly label = input('Código');
+  readonly readOnly = input(false);
+  readonly allowUpload = input(false);
+  readonly maxChars = input(10_000);
 
-  @Output() codigoChange = new EventEmitter<string>();
+  readonly languageDetected = output<LanguageCode>();
 
-  private editor?: EditorView;
+  protected readonly uploadError = signal<string | null>(null);
+  protected readonly accept = this.languageService.acceptedExtensions;
 
-  private compartimentoLenguaje = new Compartment();
-  private compartimentoLectura = new Compartment();
+  private readonly host = viewChild.required<ElementRef<HTMLDivElement>>('host');
+  private kit?: CodeMirrorKit;
+  private view?: EditorView;
+  private destroyed = false;
 
-  ngAfterViewInit(): void {
-    this.crearEditor();
-  }
+  constructor() {
+    afterNextRender(() => void this.createView());
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (!this.editor) {
-      return;
-    }
+    effect(() => {
+      const text = this.value();
+      const view = this.view;
+      if (view && view.state.doc.toString() !== text) {
+        view.dispatch({ changes: { from: 0, to: view.state.doc.length, insert: text } });
+      }
+    });
 
-    if (changes['lenguaje']) {
-      this.editor.dispatch({
-        effects: this.compartimentoLenguaje.reconfigure(
-          this.obtenerLenguaje()
-        )
-      });
-    }
+    effect(() => {
+      const code = this.language();
+      if (this.view) {
+        void this.applyLanguage(code);
+      }
+    });
 
-    if (changes['soloLectura']) {
-      this.editor.dispatch({
-        effects: this.compartimentoLectura.reconfigure(
-          this.obtenerConfiguracionLectura()
-        )
-      });
-    }
-
-    if (
-      changes['codigo'] &&
-      this.codigo !== this.editor.state.doc.toString()
-    ) {
-      this.editor.dispatch({
-        changes: {
-          from: 0,
-          to: this.editor.state.doc.length,
-          insert: this.codigo
-        }
-      });
-    }
+    effect(() => {
+      const readOnly = this.readOnly();
+      if (this.view && this.kit) {
+        this.view.dispatch({ effects: this.kit.editableSlot.reconfigure(this.editable(readOnly)) });
+      }
+    });
   }
 
   ngOnDestroy(): void {
-    this.editor?.destroy();
+    this.destroyed = true;
+    this.view?.destroy();
   }
 
-  private crearEditor(): void {
-    const estado = EditorState.create({
-      doc: this.codigo,
-      extensions: [syntaxHighlighting(defaultHighlightStyle, {
-        fallback: true
-      }),
-        basicSetup,
-
-        this.compartimentoLenguaje.of(
-          this.obtenerLenguaje()
-        ),
-
-        this.compartimentoLectura.of(
-          this.obtenerConfiguracionLectura()
-        ),
-
-        EditorView.theme({
-          '&': {
-            height: '100%',
-            backgroundColor: '#0f1017',
-            color: '#e5e7eb',
-            fontSize: '14px'
-          },
-          '.cm-gutters': {
-            backgroundColor: '#0f1017',
-            color: '#858ba3',
-            borderRight: '1px solid #2b3042'
-          },
-          '.cm-activeLine': {
-            backgroundColor: '#191e30'
-          },
-          '.cm-activeLineGutter': {
-            backgroundColor: '#20253a'
-          },
-          '.cm-cursor': {
-            borderLeftColor: '#c4b5fd'
-          },
-          '&.cm-focused': {
-            outline: 'none'
-          }
-        }, { dark: true }),
-
-        EditorView.updateListener.of(actualizacion => {
-          if (actualizacion.docChanged) {
-            this.codigoChange.emit(
-              actualizacion.state.doc.toString()
-            );
-          }
-        })
-      ]
-    });
-
-    this.editor = new EditorView({
-      state: estado,
-      parent: this.editorHost.nativeElement
-    });
-  }
-
-  private obtenerLenguaje() {
-    switch (this.lenguaje) {
-      case 'java':
-        return java();
-
-      case 'python':
-        return python();
-
-      default:
-        return javascript();
+  protected async onFile(input: HTMLInputElement): Promise<void> {
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) {
+      return;
+    }
+    try {
+      const loaded: LoadedSource = await this.sourceFileService.read(file, this.maxChars());
+      this.uploadError.set(null);
+      this.value.set(loaded.text);
+      this.languageDetected.emit(loaded.language);
+    } catch (err) {
+      this.uploadError.set(err instanceof Error ? err.message : 'No se pudo leer el archivo.');
     }
   }
 
-  private obtenerConfiguracionLectura() {
-    return [
-      EditorState.readOnly.of(this.soloLectura),
-      EditorView.editable.of(!this.soloLectura)
-    ];
+  private async createView(): Promise<void> {
+    const dark = window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
+    const [{ EditorView, basicSetup }, { EditorState, Compartment }, darkTheme] = await Promise.all([
+      import('codemirror'),
+      import('@codemirror/state'),
+      dark ? import('@codemirror/theme-one-dark').then((m) => [m.oneDark]) : Promise.resolve([]),
+    ]);
+    if (this.destroyed) {
+      return;
+    }
+    this.kit = { EditorView, basicSetup, EditorState, languageSlot: new Compartment(), editableSlot: new Compartment() };
+
+    this.view = new EditorView({
+      parent: this.host().nativeElement,
+      state: EditorState.create({
+        doc: this.value(),
+        extensions: [
+          basicSetup,
+          EditorView.lineWrapping,
+          EditorView.contentAttributes.of({ 'aria-label': this.label() }),
+          ...darkTheme,
+          EditorView.theme({
+            '&': { maxHeight: '60vh', minHeight: '220px' },
+            '.cm-scroller': { overflow: 'auto', fontFamily: MONO, fontSize: '0.9rem' },
+          }),
+          this.kit.languageSlot.of([]),
+          this.kit.editableSlot.of(this.editable(this.readOnly())),
+          EditorView.updateListener.of((update) => {
+            if (update.docChanged) {
+              this.value.set(update.state.doc.toString());
+            }
+          }),
+        ],
+      }),
+    });
+    await this.applyLanguage(this.language());
+  }
+
+  private editable(readOnly: boolean): Extension {
+    const { EditorState, EditorView } = this.kit!;
+    return [EditorState.readOnly.of(readOnly), EditorView.editable.of(!readOnly)];
+  }
+
+  private async applyLanguage(code: LanguageCode): Promise<void> {
+    const extension = await this.languageService.loadExtension(code);
+    if (this.destroyed || !this.view || !this.kit || this.language() !== code) {
+      return;
+    }
+    this.view.dispatch({ effects: this.kit.languageSlot.reconfigure(extension) });
   }
 }

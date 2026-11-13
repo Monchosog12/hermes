@@ -1,5 +1,7 @@
 package co.edu.unbosque.hermes.security;
 
+import jakarta.servlet.DispatcherType;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -51,10 +53,16 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**").permitAll()
+				.authorizeHttpRequests(auth -> auth
+						// Permite el reenvio interno a /error para que se vea el codigo real (400, 415, 500...)
+						// en lugar de un 403 generico
+						.dispatcherTypeMatchers(DispatcherType.ERROR, DispatcherType.FORWARD).permitAll()
+						.requestMatchers("/error").permitAll()
+						.requestMatchers("/auth/**").permitAll()
 						.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 						.requestMatchers("/user/**").hasRole("ADMIN")
-						.requestMatchers("/hermes/translate", "/hermes/bettercode").hasRole("USER").anyRequest().authenticated())	
+						.requestMatchers("/gemma/**", "/bettercode").hasRole("USER")
+						.anyRequest().authenticated())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authenticationProvider(authenticationProvider())
 				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

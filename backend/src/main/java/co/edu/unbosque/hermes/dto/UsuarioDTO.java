@@ -65,7 +65,7 @@ public class UsuarioDTO {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, email, password, rol, username);
+		return Objects.hash(email, id, password, rol, username);
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class UsuarioDTO {
 		if (getClass() != obj.getClass())
 			return false;
 		UsuarioDTO other = (UsuarioDTO) obj;
-		return Objects.equals(id, other.id) && Objects.equals(email, other.email)
+		return Objects.equals(email, other.email) && Objects.equals(id, other.id)
 				&& Objects.equals(password, other.password) && rol == other.rol
 				&& Objects.equals(username, other.username);
 	}

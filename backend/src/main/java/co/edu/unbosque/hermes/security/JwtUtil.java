@@ -9,7 +9,8 @@ import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import co.edu.unbosque.springfirstapp.model.User;
+
+import co.edu.unbosque.hermes.entity.Usuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -115,10 +116,9 @@ public class JwtUtil {
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("authorities", userDetails.getAuthorities());
 
-		// Añadir rol a las reclamaciones si userDetails es de nuestra clase User
-		if (userDetails instanceof User) {
-			User user = (User) userDetails;
-			claims.put("role", user.getRole().name());
+		// Añadir rol a las reclamaciones si userDetails es de nuestra clase Usuario
+		if (userDetails instanceof Usuario usuario && usuario.getRol() != null) {
+			claims.put("role", usuario.getRol().name());
 		}
 
 		return createToken(claims, userDetails.getUsername());

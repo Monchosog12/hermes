@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = { "http://localhost:8080", "http://localhost:8081" })
+@CrossOrigin(origins = { "http://localhost:4200", "http://localhost:4201" })
 @Transactional
 @Tag(name = "Gestión de Usuarios", description = "Endpoints para administrar usuarios")
 @SecurityRequirement(name = "bearerAuth")
@@ -58,7 +58,7 @@ public class UsuarioController {
 	
 	@PostMapping("/updateuser")
 	ResponseEntity<String> updateUser(@RequestBody Long id, @RequestBody UsuarioDTO newUser){
-		int status = usuarioService.actualizarUsuarioPorId(id, newUser);
+		int status = usuarioService.actualizarPorId(id, newUser);
 		if(status == 0) {
 			return new ResponseEntity<String>("Usuario actualizado correctamente", HttpStatus.ACCEPTED);
 		}else {

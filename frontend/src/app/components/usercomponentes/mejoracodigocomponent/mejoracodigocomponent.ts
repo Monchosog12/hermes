@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
-
-
-type Lenguaje = 'javascript' | 'java' | 'python';
+import { LanguageCode } from '../../../models/ai/ai.models';
 
 
 @Component({
@@ -11,7 +9,7 @@ type Lenguaje = 'javascript' | 'java' | 'python';
   templateUrl: './mejoracodigocomponent.html',
 })
 export class Mejoracodigocomponent {
-  lenguajeSeleccionado: Lenguaje = 'javascript';
+  lenguajeSeleccionado: LanguageCode = 'JAVASCRIPT';
 
   codigoOriginal = '';
   codigoMejorado = '';

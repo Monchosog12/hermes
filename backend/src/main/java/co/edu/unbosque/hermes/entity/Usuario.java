@@ -19,9 +19,13 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "usuario")
-public class Usuario implements UserDetails{
+public class Usuario implements UserDetails {
 
-	private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) long id;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
 	@Column(unique = true, nullable = false)
 	private String email;
 	@Column(nullable = false)
@@ -31,7 +35,7 @@ public class Usuario implements UserDetails{
 	@Enumerated(EnumType.STRING)
 	private Rol rol;
 	private boolean cuentaNoExpirada;
-	
+
 	public Usuario() {
 		// TODO Auto-generated constructor stub
 	}
@@ -43,11 +47,11 @@ public class Usuario implements UserDetails{
 		this.rol = rol;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -97,13 +101,13 @@ public class Usuario implements UserDetails{
 
 	@Override
 	public String toString() {
-		return "Usuario [id=" + id + ", email=" + email + ", userName=" + username + ", password=" + password + ", rol="
+		return "Usuario [id=" + id + ", email=" + email + ", username=" + username + ", password=" + password + ", rol="
 				+ rol + ", cuentaNoExpirada=" + cuentaNoExpirada + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(Boolean.valueOf(cuentaNoExpirada), email, Long.valueOf(id), password, rol, username);
+		return Objects.hash(Boolean.valueOf(cuentaNoExpirada), email, id, password, rol, username);
 	}
 
 	@Override
@@ -115,13 +119,17 @@ public class Usuario implements UserDetails{
 		if (getClass() != obj.getClass())
 			return false;
 		Usuario other = (Usuario) obj;
-		return cuentaNoExpirada == other.cuentaNoExpirada && Objects.equals(email, other.email) && id == other.id
-				&& Objects.equals(password, other.password) && rol == other.rol
+		return cuentaNoExpirada == other.cuentaNoExpirada && Objects.equals(email, other.email)
+				&& Objects.equals(id, other.id) && Objects.equals(password, other.password) && rol == other.rol
 				&& Objects.equals(username, other.username);
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
+		// Evita NullPointerException con usuarios antiguos guardados sin rol
+		if (rol == null) {
+			return List.of();
+		}
 		return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));
 	}
 
