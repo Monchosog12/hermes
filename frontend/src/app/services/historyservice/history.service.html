@@ -1,0 +1,10 @@
+<section class="card" aria-labelledby="activity-title">
+  <h3 id="activity-title">Tu actividad</h3>
+  @if (error()) {
+    <p class="alert alert-error" role="alert">{{ error() }}</p>
+  } @else if (total() === null) {
+    <p class="muted" role="status">Consultando…</p>
+  } @else {
+    <p>Tienes <strong>{{ total() }}</strong> solicitudes en tu <a routerLink="/historial">historial</a>.</p>
+  }
+</section>

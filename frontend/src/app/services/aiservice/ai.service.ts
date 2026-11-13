@@ -1,15 +1,14 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Injectable, OnInit, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { errorMessage } from '../http/errors';
-import { ModelInfo, ProcessRequest, ProcessResponse } from '../models/aiservice.models';
+import { ModelInfo, ProcessRequest, ProcessResponse } from '../../models/ai/ai.models';
 
 @Injectable({ providedIn: 'root' })
 export class AiService {
   private readonly http = inject(HttpClient);
   private readonly api = `${environment.apiUrl}/ai`;
-
   private readonly modelsState = signal<ModelInfo[]>([]);
   private readonly modelsErrorState = signal<string | null>(null);
   private requested = false;
@@ -34,5 +33,20 @@ export class AiService {
 
   process(body: ProcessRequest): Observable<ProcessResponse> {
     return this.http.post<ProcessResponse>(`${this.api}/process`, body);
+  }
+}
+
+@Component({
+  selector: 'app-aiservice',
+  standalone: false,
+  templateUrl: './ai.service.html',
+  styleUrl: './ai.service.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class Aiservice implements OnInit {
+  protected readonly ai = inject(AiService);
+
+  ngOnInit(): void {
+    this.ai.loadModels();
   }
 }

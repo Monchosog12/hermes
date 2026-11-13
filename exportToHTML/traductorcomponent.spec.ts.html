@@ -1,0 +1,113 @@
+<html>
+<head>
+<title>traductorcomponent.spec.ts</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #6aab73;}
+.s4 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+traductorcomponent.spec.ts</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s2">{ </span><span class="s1">provideHttpClient </span><span class="s2">} </span><span class="s1">from </span><span class="s3">'@angular/common/http'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s2">{ </span><span class="s1">HttpTestingController</span><span class="s2">, </span><span class="s1">provideHttpClientTesting </span><span class="s2">} </span><span class="s1">from </span><span class="s3">'@angular/common/http/testing'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s2">{ </span><span class="s1">ComponentFixture</span><span class="s2">, </span><span class="s1">TestBed </span><span class="s2">} </span><span class="s1">from </span><span class="s3">'@angular/core/testing'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s2">{ </span><span class="s1">ReactiveFormsModule </span><span class="s2">} </span><span class="s1">from </span><span class="s3">'@angular/forms'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s2">{ </span><span class="s1">environment </span><span class="s2">} </span><span class="s1">from </span><span class="s3">'../../../../environments/environment'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s2">{ </span><span class="s1">Codeeditorcomponent </span><span class="s2">} </span><span class="s1">from </span><span class="s3">'../codeeditorcomponent/codeeditorcomponent'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s2">{ </span><span class="s1">Resultcomponent </span><span class="s2">} </span><span class="s1">from </span><span class="s3">'../resultcomponent/resultcomponent'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s2">{ </span><span class="s1">Traductorcomponent </span><span class="s2">} </span><span class="s1">from </span><span class="s3">'./traductorcomponent'</span><span class="s2">;</span>
+
+<span class="s1">describe</span><span class="s2">(</span><span class="s3">'Traductorcomponent'</span><span class="s2">, () =&gt; {</span>
+  <span class="s0">let </span><span class="s1">fixture</span><span class="s2">: </span><span class="s1">ComponentFixture</span><span class="s2">&lt;</span><span class="s1">Traductorcomponent</span><span class="s2">&gt;;</span>
+  <span class="s0">let </span><span class="s1">http</span><span class="s2">: </span><span class="s1">HttpTestingController</span><span class="s2">;</span>
+  <span class="s0">const </span><span class="s1">el </span><span class="s2">= () =&gt; </span><span class="s1">fixture</span><span class="s2">.</span><span class="s1">nativeElement </span><span class="s2">as </span><span class="s1">HTMLElement</span><span class="s2">;</span>
+  <span class="s0">const </span><span class="s1">submit </span><span class="s2">= () =&gt; </span><span class="s1">el</span><span class="s2">().</span><span class="s1">querySelector</span><span class="s2">(</span><span class="s3">'form'</span><span class="s2">)!.</span><span class="s1">dispatchEvent</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Event</span><span class="s2">(</span><span class="s3">'submit'</span><span class="s2">));</span>
+  <span class="s0">const </span><span class="s1">alertText </span><span class="s2">= () =&gt; </span><span class="s1">el</span><span class="s2">().</span><span class="s1">querySelector</span><span class="s2">(</span><span class="s3">'[role=&quot;alert&quot;]'</span><span class="s2">)?.</span><span class="s1">textContent </span><span class="s2">?? </span><span class="s3">''</span><span class="s2">;</span>
+
+  <span class="s1">beforeEach</span><span class="s2">(</span><span class="s1">async </span><span class="s2">() =&gt; {</span>
+    <span class="s0">await </span><span class="s1">TestBed</span><span class="s2">.</span><span class="s1">configureTestingModule</span><span class="s2">({</span>
+      <span class="s1">declarations</span><span class="s2">: [</span><span class="s1">Traductorcomponent</span><span class="s2">, </span><span class="s1">Codeeditorcomponent</span><span class="s2">, </span><span class="s1">Resultcomponent</span><span class="s2">],</span>
+      <span class="s1">imports</span><span class="s2">: [</span><span class="s1">ReactiveFormsModule</span><span class="s2">],</span>
+      <span class="s1">providers</span><span class="s2">: [</span><span class="s1">provideHttpClient</span><span class="s2">(), </span><span class="s1">provideHttpClientTesting</span><span class="s2">()],</span>
+    <span class="s2">}).</span><span class="s1">compileComponents</span><span class="s2">();</span>
+    <span class="s1">fixture </span><span class="s2">= </span><span class="s1">TestBed</span><span class="s2">.</span><span class="s1">createComponent</span><span class="s2">(</span><span class="s1">Traductorcomponent</span><span class="s2">);</span>
+    <span class="s1">http </span><span class="s2">= </span><span class="s1">TestBed</span><span class="s2">.</span><span class="s1">inject</span><span class="s2">(</span><span class="s1">HttpTestingController</span><span class="s2">);</span>
+    <span class="s1">fixture</span><span class="s2">.</span><span class="s1">detectChanges</span><span class="s2">();</span>
+    <span class="s1">http</span><span class="s2">.</span><span class="s1">expectOne</span><span class="s2">(</span><span class="s3">`</span><span class="s1">$</span><span class="s2">{</span><span class="s1">environment</span><span class="s2">.</span><span class="s1">apiUrl</span><span class="s2">}</span><span class="s3">/ai/models`</span><span class="s2">).</span><span class="s1">flush</span><span class="s2">([</span>
+      <span class="s2">{ </span><span class="s1">id</span><span class="s2">: </span><span class="s3">'model-a'</span><span class="s2">, </span><span class="s1">label</span><span class="s2">: </span><span class="s3">'Modelo A' </span><span class="s2">},</span>
+      <span class="s2">{ </span><span class="s1">id</span><span class="s2">: </span><span class="s3">'model-b'</span><span class="s2">, </span><span class="s1">label</span><span class="s2">: </span><span class="s3">'Modelo B' </span><span class="s2">},</span>
+    <span class="s2">]);</span>
+    <span class="s1">fixture</span><span class="s2">.</span><span class="s1">detectChanges</span><span class="s2">();</span>
+    <span class="s1">fixture</span><span class="s2">.</span><span class="s1">detectChanges</span><span class="s2">();</span>
+  <span class="s2">});</span>
+
+  <span class="s1">afterEach</span><span class="s2">(() =&gt; </span><span class="s1">http</span><span class="s2">.</span><span class="s1">verify</span><span class="s2">());</span>
+
+  <span class="s1">it</span><span class="s2">(</span><span class="s3">'preselecciona el primer modelo disponible'</span><span class="s2">, () =&gt; {</span>
+    <span class="s1">expect</span><span class="s2">((</span><span class="s1">el</span><span class="s2">().</span><span class="s1">querySelector</span><span class="s2">(</span><span class="s3">'#modelId'</span><span class="s2">) as </span><span class="s1">HTMLSelectElement</span><span class="s2">).</span><span class="s1">value</span><span class="s2">).</span><span class="s1">toBe</span><span class="s2">(</span><span class="s3">'model-a'</span><span class="s2">);</span>
+  <span class="s2">});</span>
+
+  <span class="s1">it</span><span class="s2">(</span><span class="s3">'pide escribir código antes de traducir y no llama al backend'</span><span class="s2">, () =&gt; {</span>
+    <span class="s1">submit</span><span class="s2">();</span>
+    <span class="s1">fixture</span><span class="s2">.</span><span class="s1">detectChanges</span><span class="s2">();</span>
+    <span class="s1">expect</span><span class="s2">(</span><span class="s1">alertText</span><span class="s2">()).</span><span class="s1">toContain</span><span class="s2">(</span><span class="s3">'Escribe o carga'</span><span class="s2">);</span>
+    <span class="s1">http</span><span class="s2">.</span><span class="s1">expectNone</span><span class="s2">(</span><span class="s3">`</span><span class="s1">$</span><span class="s2">{</span><span class="s1">environment</span><span class="s2">.</span><span class="s1">apiUrl</span><span class="s2">}</span><span class="s3">/ai/process`</span><span class="s2">);</span>
+  <span class="s2">});</span>
+
+  <span class="s1">it</span><span class="s2">(</span><span class="s3">'no permite traducir al mismo lenguaje'</span><span class="s2">, () =&gt; {</span>
+    <span class="s1">fixture</span><span class="s2">.</span><span class="s1">componentInstance</span><span class="s2">.</span><span class="s1">code</span><span class="s2">.</span><span class="s1">set</span><span class="s2">(</span><span class="s3">'int a;'</span><span class="s2">);</span>
+    <span class="s0">const </span><span class="s1">target </span><span class="s2">= </span><span class="s1">el</span><span class="s2">().</span><span class="s1">querySelector</span><span class="s2">(</span><span class="s3">'#targetLanguage'</span><span class="s2">) as </span><span class="s1">HTMLSelectElement</span><span class="s2">;</span>
+    <span class="s1">target</span><span class="s2">.</span><span class="s1">value </span><span class="s2">= </span><span class="s3">'JAVA'</span><span class="s2">;</span>
+    <span class="s1">target</span><span class="s2">.</span><span class="s1">dispatchEvent</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Event</span><span class="s2">(</span><span class="s3">'change'</span><span class="s2">));</span>
+    <span class="s1">submit</span><span class="s2">();</span>
+    <span class="s1">fixture</span><span class="s2">.</span><span class="s1">detectChanges</span><span class="s2">();</span>
+    <span class="s1">expect</span><span class="s2">(</span><span class="s1">alertText</span><span class="s2">()).</span><span class="s1">toContain</span><span class="s2">(</span><span class="s3">'lenguaje de destino distinto'</span><span class="s2">);</span>
+    <span class="s1">http</span><span class="s2">.</span><span class="s1">expectNone</span><span class="s2">(</span><span class="s3">`</span><span class="s1">$</span><span class="s2">{</span><span class="s1">environment</span><span class="s2">.</span><span class="s1">apiUrl</span><span class="s2">}</span><span class="s3">/ai/process`</span><span class="s2">);</span>
+  <span class="s2">});</span>
+
+  <span class="s1">it</span><span class="s2">(</span><span class="s3">'envía TRANSLATE con los datos del formulario y muestra el resultado'</span><span class="s2">, () =&gt; {</span>
+    <span class="s1">fixture</span><span class="s2">.</span><span class="s1">componentInstance</span><span class="s2">.</span><span class="s1">code</span><span class="s2">.</span><span class="s1">set</span><span class="s2">(</span><span class="s3">'System.out.println(&quot;Hola&quot;);'</span><span class="s2">);</span>
+    <span class="s1">submit</span><span class="s2">();</span>
+    <span class="s0">const </span><span class="s1">req </span><span class="s2">= </span><span class="s1">http</span><span class="s2">.</span><span class="s1">expectOne</span><span class="s2">(</span><span class="s3">`</span><span class="s1">$</span><span class="s2">{</span><span class="s1">environment</span><span class="s2">.</span><span class="s1">apiUrl</span><span class="s2">}</span><span class="s3">/ai/process`</span><span class="s2">);</span>
+    <span class="s1">expect</span><span class="s2">(</span><span class="s1">req</span><span class="s2">.</span><span class="s1">request</span><span class="s2">.</span><span class="s1">body</span><span class="s2">).</span><span class="s1">toEqual</span><span class="s2">({</span>
+      <span class="s1">operation</span><span class="s2">: </span><span class="s3">'TRANSLATE'</span><span class="s2">,</span>
+      <span class="s1">sourceLanguage</span><span class="s2">: </span><span class="s3">'JAVA'</span><span class="s2">,</span>
+      <span class="s1">targetLanguage</span><span class="s2">: </span><span class="s3">'PYTHON'</span><span class="s2">,</span>
+      <span class="s1">modelId</span><span class="s2">: </span><span class="s3">'model-a'</span><span class="s2">,</span>
+      <span class="s1">code</span><span class="s2">: </span><span class="s3">'System.out.println(&quot;Hola&quot;);'</span><span class="s2">,</span>
+    <span class="s2">});</span>
+    <span class="s1">req</span><span class="s2">.</span><span class="s1">flush</span><span class="s2">({</span>
+      <span class="s1">modelId</span><span class="s2">: </span><span class="s3">'model-a'</span><span class="s2">,</span>
+      <span class="s1">operation</span><span class="s2">: </span><span class="s3">'TRANSLATE'</span><span class="s2">,</span>
+      <span class="s1">resultCode</span><span class="s2">: </span><span class="s3">'print(&quot;Hola&quot;)'</span><span class="s2">,</span>
+      <span class="s1">explanation</span><span class="s2">: </span><span class="s3">'println equivale a print.'</span><span class="s2">,</span>
+      <span class="s1">recommendations</span><span class="s2">: [],</span>
+      <span class="s1">latencyMs</span><span class="s2">: </span><span class="s4">900</span><span class="s2">,</span>
+    <span class="s2">});</span>
+    <span class="s1">fixture</span><span class="s2">.</span><span class="s1">detectChanges</span><span class="s2">();</span>
+    <span class="s1">expect</span><span class="s2">(</span><span class="s1">el</span><span class="s2">().</span><span class="s1">querySelector</span><span class="s2">(</span><span class="s3">'app-resultcomponent'</span><span class="s2">)).</span><span class="s1">not</span><span class="s2">.</span><span class="s1">toBeNull</span><span class="s2">();</span>
+    <span class="s1">expect</span><span class="s2">(</span><span class="s1">el</span><span class="s2">().</span><span class="s1">textContent</span><span class="s2">).</span><span class="s1">toContain</span><span class="s2">(</span><span class="s3">'println equivale a print.'</span><span class="s2">);</span>
+  <span class="s2">});</span>
+
+  <span class="s1">it</span><span class="s2">(</span><span class="s3">'muestra el mensaje del servidor si la IA falla'</span><span class="s2">, () =&gt; {</span>
+    <span class="s1">fixture</span><span class="s2">.</span><span class="s1">componentInstance</span><span class="s2">.</span><span class="s1">code</span><span class="s2">.</span><span class="s1">set</span><span class="s2">(</span><span class="s3">'int a;'</span><span class="s2">);</span>
+    <span class="s1">submit</span><span class="s2">();</span>
+    <span class="s1">http</span>
+      <span class="s2">.</span><span class="s1">expectOne</span><span class="s2">(</span><span class="s3">`</span><span class="s1">$</span><span class="s2">{</span><span class="s1">environment</span><span class="s2">.</span><span class="s1">apiUrl</span><span class="s2">}</span><span class="s3">/ai/process`</span><span class="s2">)</span>
+      <span class="s2">.</span><span class="s1">flush</span><span class="s2">({ </span><span class="s1">detail</span><span class="s2">: </span><span class="s3">'El servicio de IA no está disponible. Intenta de nuevo.' </span><span class="s2">}, { </span><span class="s1">status</span><span class="s2">: </span><span class="s4">502</span><span class="s2">, </span><span class="s1">statusText</span><span class="s2">: </span><span class="s3">'Bad Gateway' </span><span class="s2">});</span>
+    <span class="s1">fixture</span><span class="s2">.</span><span class="s1">detectChanges</span><span class="s2">();</span>
+    <span class="s1">expect</span><span class="s2">(</span><span class="s1">alertText</span><span class="s2">()).</span><span class="s1">toContain</span><span class="s2">(</span><span class="s3">'no está disponible'</span><span class="s2">);</span>
+    <span class="s1">expect</span><span class="s2">(</span><span class="s1">el</span><span class="s2">().</span><span class="s1">querySelector</span><span class="s2">(</span><span class="s3">'app-resultcomponent'</span><span class="s2">)).</span><span class="s1">toBeNull</span><span class="s2">();</span>
+  <span class="s2">});</span>
+<span class="s2">});</span>
+</pre>
+</body>
+</html>

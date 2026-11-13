@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+<section class="card" aria-labelledby="auth-roles-title">
+  <h3 id="auth-roles-title">Roles y contraseña</h3>
+  <ul>
+    @for (r of roles; track r.role) {
+      <li><strong>{{ r.label }}:</strong> {{ r.permissions }}</li>
+    }
+  </ul>
+  <p class="hint">Contraseña: {{ passwordHint }}</p>
+</section>

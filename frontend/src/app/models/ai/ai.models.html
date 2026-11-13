@@ -1,10 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+<section class="card" aria-labelledby="ai-ops-title">
+  <h3 id="ai-ops-title">Operaciones disponibles</h3>
+  <ul>
+    @for (op of operations; track op.code) {
+      <li><strong>{{ op.label }}:</strong> {{ op.help }}</li>
+    }
+  </ul>
+  <p class="hint">Máximo {{ maxChars | number }} caracteres por solicitud.</p>
+</section>

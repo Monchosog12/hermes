@@ -1,0 +1,9 @@
+<section class="card" aria-labelledby="hist-fields-title">
+  <h3 id="hist-fields-title">Qué guardamos en tu historial</h3>
+  <ul>
+    @for (field of fields; track field) {
+      <li>{{ field }}</li>
+    }
+  </ul>
+  <p class="hint">Solo tú puedes ver tu historial.</p>
+</section>

@@ -1,8 +1,8 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
+import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { environment } from '../../../environments/environment';
-import { AiService } from './ai.service';
+import { AiService, Aiservice } from './ai.service';
 
 describe('AiService', () => {
   let service: AiService;
@@ -50,5 +50,27 @@ describe('AiService', () => {
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(body);
     req.flush({});
+  });
+});
+
+describe('Aiservice (componente)', () => {
+  let fixture: ComponentFixture<Aiservice>;
+  const el = () => fixture.nativeElement as HTMLElement;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [Aiservice],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    }).compileComponents();
+    fixture = TestBed.createComponent(Aiservice);
+  });
+
+  it('muestra los modelos que devuelve el backend', () => {
+    const http = TestBed.inject(HttpTestingController);
+    fixture.detectChanges();
+    http.expectOne(`${environment.apiUrl}/ai/models`).flush([{ id: 'model-a', label: 'Modelo A' }]);
+    fixture.detectChanges();
+    expect(el().textContent).toContain('Modelo A');
+    http.verify();
   });
 });

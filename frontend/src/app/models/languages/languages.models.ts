@@ -1,10 +1,11 @@
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Extension } from '@codemirror/state';
-import { LanguageCode } from '../models/aiservice.models';
+import { LanguageCode } from '../ai/ai.models';
 
 export interface LanguageOption {
   code: LanguageCode;
   label: string;
-  extension: string;
+  extension: string; // extensión del archivo al descargar o cargar
 }
 
 export const LANGUAGES: readonly LanguageOption[] = [
@@ -45,4 +46,15 @@ export async function loadLanguageExtension(code: LanguageCode): Promise<Extensi
       return StreamLanguage.define(csharp);
     }
   }
+}
+
+@Component({
+  selector: 'app-languagesmodels',
+  standalone: false,
+  templateUrl: './languages.models.html',
+  styleUrl: './languages.models.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class Languagesmodels {
+  protected readonly languages = LANGUAGES;
 }

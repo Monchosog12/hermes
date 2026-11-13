@@ -1,0 +1,5 @@
+.kpis { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; padding: 0; }
+.kpis li { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; display: grid; }
+.kpis strong { font-size: 1.8rem; }
+.kpis span { color: var(--muted); font-size: 0.9rem; }
+:host { display: block; }

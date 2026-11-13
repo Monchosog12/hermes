@@ -1,10 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+<section class="card" aria-labelledby="langs-title">
+  <h3 id="langs-title">Lenguajes soportados</h3>
+  <table class="table">
+    <caption class="visually-hidden">Lenguajes y extensión de archivo</caption>
+    <thead>
+    <tr><th scope="col">Lenguaje</th><th scope="col">Extensión</th></tr>
+    </thead>
+    <tbody>
+      @for (lang of languages; track lang.code) {
+        <tr><td>{{ lang.label }}</td><td>.{{ lang.extension }}</td></tr>
+      }
+    </tbody>
+  </table>
+</section>

@@ -1,10 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+<section class="card" aria-labelledby="ai-models-title">
+  <h3 id="ai-models-title">Modelos de IA disponibles</h3>
+  @if (ai.modelsError(); as error) {
+    <p class="alert alert-error" role="alert">{{ error }}</p>
+  } @else if (ai.models().length === 0) {
+    <p class="muted" role="status">Cargando modelos…</p>
+  } @else {
+    <ul>
+      @for (model of ai.models(); track model.id) {
+        <li>{{ model.label }}</li>
+      }
+    </ul>
+    <p class="hint">Puedes comparar las respuestas cambiando de modelo en cada solicitud.</p>
+  }
+</section>

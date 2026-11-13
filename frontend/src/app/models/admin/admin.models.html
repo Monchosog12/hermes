@@ -1,0 +1,8 @@
+<section class="legend" aria-labelledby="status-legend-title">
+  <h2 id="status-legend-title">Estados de usuario</h2>
+  <ul>
+    @for (st of statuses; track st.code) {
+      <li><code>{{ st.code }}</code>: {{ st.label }}</li>
+    }
+  </ul>
+</section>

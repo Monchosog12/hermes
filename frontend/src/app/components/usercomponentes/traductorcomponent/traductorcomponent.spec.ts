@@ -54,7 +54,7 @@ describe('Traductorcomponent', () => {
     expect(alertText()).toContain('lenguaje de destino distinto');
     http.expectNone(`${environment.apiUrl}/ai/process`);
   });
-
+ 
   it('envía TRANSLATE con los datos del formulario y muestra el resultado', () => {
     fixture.componentInstance.code.set('System.out.println("Hola");');
     submit();
