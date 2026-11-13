@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { errorMessage } from '../http/errors';
+import { errorMessage } from '../../services/http/errors';
 import { ModelInfo, ProcessRequest, ProcessResponse } from '../models/ai.models';
 
 @Injectable({ providedIn: 'root' })
