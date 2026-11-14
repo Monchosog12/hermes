@@ -5,7 +5,6 @@ import {
   OnDestroy,
   afterNextRender,
   effect,
-  inject,
   input,
   model,
   output,
@@ -14,11 +13,9 @@ import {
 } from '@angular/core';
 import type { Compartment, Extension } from '@codemirror/state';
 import type { EditorView } from '@codemirror/view';
-import { LanguageCode } from '../../../models/ai/ai.models';
-import { LoadedSource } from '../../../models/files/files.models';
-import { LanguageService } from '../../../services/languages/language.service';
-import { SourceFileService } from '../../../services/files/source-file.service';
-
+import { LANGUAGES, loadLanguageExtension } from '../../../core/ai/languages';
+import { LanguageCode } from '../../../core/models/ai.models';
+import { LoadedSource, readSourceFile } from '../../../core/files/source-file';
 
 const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace";
 
@@ -40,9 +37,6 @@ interface CodeMirrorKit {
 })
 export class Codeeditorcomponent implements OnDestroy {
 
-  private readonly languageService = inject(LanguageService);
-  private readonly sourceFileService = inject(SourceFileService);
-
   readonly value = model('');
   readonly language = input.required<LanguageCode>();
   readonly label = input('Código');
@@ -53,7 +47,7 @@ export class Codeeditorcomponent implements OnDestroy {
   readonly languageDetected = output<LanguageCode>();
 
   protected readonly uploadError = signal<string | null>(null);
-  protected readonly accept = this.languageService.acceptedExtensions;
+  protected readonly accept = LANGUAGES.map((l) => `.${l.extension}`).join(',');
 
   private readonly host = viewChild.required<ElementRef<HTMLDivElement>>('host');
   private kit?: CodeMirrorKit;
@@ -98,7 +92,7 @@ export class Codeeditorcomponent implements OnDestroy {
       return;
     }
     try {
-      const loaded: LoadedSource = await this.sourceFileService.read(file, this.maxChars());
+      const loaded: LoadedSource = await readSourceFile(file, this.maxChars());
       this.uploadError.set(null);
       this.value.set(loaded.text);
       this.languageDetected.emit(loaded.language);
@@ -151,7 +145,7 @@ export class Codeeditorcomponent implements OnDestroy {
   }
 
   private async applyLanguage(code: LanguageCode): Promise<void> {
-    const extension = await this.languageService.loadExtension(code);
+    const extension = await loadLanguageExtension(code);
     if (this.destroyed || !this.view || !this.kit || this.language() !== code) {
       return;
     }

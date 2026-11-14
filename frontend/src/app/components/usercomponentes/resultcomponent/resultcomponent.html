@@ -1,0 +1,39 @@
+<section class="result" aria-labelledby="result-title">
+  <div class="result-head">
+    <h2 id="result-title">Resultado</h2>
+    <p class="chips">
+      <span class="chip">Modelo: {{ view().modelLabel }}</span>
+      <span class="chip">{{ seconds() }} s</span>
+    </p>
+  </div>
+
+  <div class="compare">
+    <app-codeeditorcomponent label="Original ({{ sourceLabel() }})" [value]="view().original"
+                             [language]="view().sourceLanguage" [readOnly]="true" />
+    <app-codeeditorcomponent label="Resultado ({{ resultLabel() }})" [value]="view().response.resultCode"
+                             [language]="view().resultLanguage" [readOnly]="true" />
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-ghost" type="button" (click)="copy()">
+      {{ copied() ? 'Copiado' : 'Copiar resultado' }}
+    </button>
+    <button class="btn btn-ghost" type="button" (click)="download()">Descargar archivo</button>
+    @if (copyFailed()) {
+      <span class="field-error" role="alert">No se pudo copiar. Selecciona el texto y cópialo manualmente.</span>
+    }
+  </div>
+
+  <h3>Explicación</h3>
+  <p class="explanation">{{ view().response.explanation }}</p>
+
+  @if (view().response.recommendations.length > 0) {
+    <h3>Sugerencias</h3>
+    <p class="muted">Son recomendaciones de la IA: revísalas antes de usar el resultado.</p>
+    <ul>
+      @for (item of view().response.recommendations; track $index) {
+        <li>{{ item }}</li>
+      }
+    </ul>
+  }
+</section>
