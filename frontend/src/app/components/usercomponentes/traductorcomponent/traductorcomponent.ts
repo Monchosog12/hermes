@@ -1,6 +1,7 @@
 
 import { Component } from '@angular/core';
-import { LanguageCode } from '../../../models/ai/ai.models';
+
+type Lenguaje = 'javascript' | 'java' | 'python';
 
 @Component({
   selector: 'app-traductorcomponent',
@@ -10,8 +11,8 @@ import { LanguageCode } from '../../../models/ai/ai.models';
 })
 export class Traductorcomponent {
 
-  lenguajeOrigen: LanguageCode = 'JAVASCRIPT';
-  lenguajeDestino: LanguageCode = 'PYTHON';
+  lenguajeOrigen: Lenguaje = 'javascript';
+  lenguajeDestino: Lenguaje = 'python';
 
   codigoOrigen = '';
   codigoDestino = '';

@@ -1,19 +1,16 @@
-import { Component, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RegisterService } from '../../../services/register.service';
-import { RegisterModel } from '../../../models/register.model';
-import { finalize } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
-import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-headercomponent',
   standalone: false,
-  styleUrl: './headercomponent.css',
   templateUrl: './headercomponent.html',
+  styleUrl: './headercomponent.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Headercomponent {
+  protected readonly auth = inject(AuthService);
+}
   private readonly fb = inject(FormBuilder);
   private readonly servicio = inject(RegisterService);
   private readonly snackBar = inject(MatSnackBar);

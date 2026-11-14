@@ -1,0 +1,127 @@
+<html>
+<head>
+<title>traductorcomponent.ts</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #6aab73;}
+.s4 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+traductorcomponent.ts</font>
+</center></td></tr></table>
+<pre><span class="s0">import </span><span class="s2">{ </span><span class="s1">ChangeDetectionStrategy</span><span class="s2">, </span><span class="s1">Component</span><span class="s2">, </span><span class="s1">OnInit</span><span class="s2">, </span><span class="s1">effect</span><span class="s2">, </span><span class="s1">inject</span><span class="s2">, </span><span class="s1">signal </span><span class="s2">} </span><span class="s1">from </span><span class="s3">'@angular/core'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s2">{ </span><span class="s1">FormBuilder</span><span class="s2">, </span><span class="s1">ReactiveFormsModule </span><span class="s2">} </span><span class="s1">from </span><span class="s3">'@angular/forms'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s2">{ </span><span class="s1">AiService </span><span class="s2">} </span><span class="s1">from </span><span class="s3">'../../../core/aiservice/aiservice.service'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s2">{ </span><span class="s1">LANGUAGES </span><span class="s2">} </span><span class="s1">from </span><span class="s3">'../../../core/aiservice/languages'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s2">{ </span><span class="s1">MAX_CODE_CHARS </span><span class="s2">} </span><span class="s1">from </span><span class="s3">'../../../core/aiservice/limits'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s2">{ </span><span class="s1">errorMessage </span><span class="s2">} </span><span class="s1">from </span><span class="s3">'../../../core/http/errors'</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s2">{ </span><span class="s1">LanguageCode</span><span class="s2">, </span><span class="s1">ResultView </span><span class="s2">} </span><span class="s1">from </span><span class="s3">'../../../core/models/aiservice.models'</span><span class="s2">;</span>
+
+<span class="s1">@Component</span><span class="s2">({</span>
+  <span class="s1">selector</span><span class="s2">: </span><span class="s3">'app-traductorcomponent'</span><span class="s2">,</span>
+  <span class="s1">standalone</span><span class="s2">: </span><span class="s0">false</span><span class="s2">,</span>
+  <span class="s1">templateUrl</span><span class="s2">: </span><span class="s3">'./traductorcomponent.html'</span><span class="s2">,</span>
+  <span class="s1">styleUrl</span><span class="s2">: </span><span class="s3">'./traductorcomponent.css'</span><span class="s2">,</span>
+  <span class="s1">changeDetection</span><span class="s2">: </span><span class="s1">ChangeDetectionStrategy</span><span class="s2">.</span><span class="s1">OnPush</span><span class="s2">,</span>
+<span class="s2">})</span>
+<span class="s0">export class </span><span class="s1">Traductorcomponent </span><span class="s0">implements </span><span class="s1">OnInit </span><span class="s2">{</span>
+  <span class="s0">protected </span><span class="s1">readonly ai </span><span class="s2">= </span><span class="s1">inject</span><span class="s2">(</span><span class="s1">AiService</span><span class="s2">);</span>
+  <span class="s0">private </span><span class="s1">readonly fb </span><span class="s2">= </span><span class="s1">inject</span><span class="s2">(</span><span class="s1">FormBuilder</span><span class="s2">).</span><span class="s1">nonNullable</span><span class="s2">;</span>
+
+  <span class="s0">protected </span><span class="s1">readonly languages </span><span class="s2">= </span><span class="s1">LANGUAGES</span><span class="s2">;</span>
+  <span class="s0">protected </span><span class="s1">readonly maxChars </span><span class="s2">= </span><span class="s1">MAX_CODE_CHARS</span><span class="s2">;</span>
+
+  <span class="s1">readonly code </span><span class="s2">= </span><span class="s1">signal</span><span class="s2">(</span><span class="s3">''</span><span class="s2">);</span>
+  <span class="s0">protected </span><span class="s1">readonly loading </span><span class="s2">= </span><span class="s1">signal</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+  <span class="s0">protected </span><span class="s1">readonly error </span><span class="s2">= </span><span class="s1">signal</span><span class="s2">&lt;</span><span class="s1">string </span><span class="s2">| </span><span class="s0">null</span><span class="s2">&gt;(</span><span class="s0">null</span><span class="s2">);</span>
+  <span class="s0">protected </span><span class="s1">readonly result </span><span class="s2">= </span><span class="s1">signal</span><span class="s2">&lt;</span><span class="s1">ResultView </span><span class="s2">| </span><span class="s0">null</span><span class="s2">&gt;(</span><span class="s0">null</span><span class="s2">);</span>
+
+  <span class="s0">protected </span><span class="s1">readonly form </span><span class="s2">= </span><span class="s0">this</span><span class="s2">.</span><span class="s1">fb</span><span class="s2">.</span><span class="s1">group</span><span class="s2">({</span>
+    <span class="s1">sourceLanguage</span><span class="s2">: </span><span class="s0">this</span><span class="s2">.</span><span class="s1">fb</span><span class="s2">.</span><span class="s1">control</span><span class="s2">&lt;</span><span class="s1">LanguageCode</span><span class="s2">&gt;(</span><span class="s3">'JAVA'</span><span class="s2">),</span>
+    <span class="s1">targetLanguage</span><span class="s2">: </span><span class="s0">this</span><span class="s2">.</span><span class="s1">fb</span><span class="s2">.</span><span class="s1">control</span><span class="s2">&lt;</span><span class="s1">LanguageCode</span><span class="s2">&gt;(</span><span class="s3">'PYTHON'</span><span class="s2">),</span>
+    <span class="s1">modelId</span><span class="s2">: </span><span class="s0">this</span><span class="s2">.</span><span class="s1">fb</span><span class="s2">.</span><span class="s1">control</span><span class="s2">(</span><span class="s3">''</span><span class="s2">),</span>
+  <span class="s2">});</span>
+
+  <span class="s0">protected </span><span class="s1">readonly sourceLanguage </span><span class="s2">= </span><span class="s1">signal</span><span class="s2">&lt;</span><span class="s1">LanguageCode</span><span class="s2">&gt;(</span><span class="s3">'JAVA'</span><span class="s2">);</span>
+
+  <span class="s1">constructor</span><span class="s2">() {</span>
+    <span class="s0">this</span><span class="s2">.</span><span class="s1">form</span><span class="s2">.</span><span class="s1">controls</span><span class="s2">.</span><span class="s1">sourceLanguage</span><span class="s2">.</span><span class="s1">valueChanges</span><span class="s2">.</span><span class="s1">subscribe</span><span class="s2">((</span><span class="s1">l</span><span class="s2">) =&gt; </span><span class="s0">this</span><span class="s2">.</span><span class="s1">sourceLanguage</span><span class="s2">.</span><span class="s1">set</span><span class="s2">(</span><span class="s1">l</span><span class="s2">));</span>
+
+    <span class="s1">effect</span><span class="s2">(() =&gt; {</span>
+      <span class="s0">const </span><span class="s1">first </span><span class="s2">= </span><span class="s0">this</span><span class="s2">.</span><span class="s1">ai</span><span class="s2">.</span><span class="s1">models</span><span class="s2">()[</span><span class="s4">0</span><span class="s2">];</span>
+      <span class="s0">if </span><span class="s2">(</span><span class="s1">first </span><span class="s2">&amp;&amp; !</span><span class="s0">this</span><span class="s2">.</span><span class="s1">form</span><span class="s2">.</span><span class="s1">controls</span><span class="s2">.</span><span class="s1">modelId</span><span class="s2">.</span><span class="s1">value</span><span class="s2">) {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">form</span><span class="s2">.</span><span class="s1">controls</span><span class="s2">.</span><span class="s1">modelId</span><span class="s2">.</span><span class="s1">setValue</span><span class="s2">(</span><span class="s1">first</span><span class="s2">.</span><span class="s1">id</span><span class="s2">);</span>
+      <span class="s2">}</span>
+    <span class="s2">});</span>
+  <span class="s2">}</span>
+
+  <span class="s1">ngOnInit</span><span class="s2">(): </span><span class="s0">void </span><span class="s2">{</span>
+    <span class="s0">this</span><span class="s2">.</span><span class="s1">ai</span><span class="s2">.</span><span class="s1">loadModels</span><span class="s2">();</span>
+  <span class="s2">}</span>
+
+  <span class="s0">protected </span><span class="s1">onLanguageDetected</span><span class="s2">(</span><span class="s1">language</span><span class="s2">: </span><span class="s1">LanguageCode</span><span class="s2">): </span><span class="s0">void </span><span class="s2">{</span>
+    <span class="s0">this</span><span class="s2">.</span><span class="s1">form</span><span class="s2">.</span><span class="s1">controls</span><span class="s2">.</span><span class="s1">sourceLanguage</span><span class="s2">.</span><span class="s1">setValue</span><span class="s2">(</span><span class="s1">language</span><span class="s2">);</span>
+  <span class="s2">}</span>
+
+  <span class="s0">protected </span><span class="s1">swap</span><span class="s2">(): </span><span class="s0">void </span><span class="s2">{</span>
+    <span class="s0">const </span><span class="s2">{ </span><span class="s1">sourceLanguage</span><span class="s2">, </span><span class="s1">targetLanguage </span><span class="s2">} = </span><span class="s0">this</span><span class="s2">.</span><span class="s1">form</span><span class="s2">.</span><span class="s1">getRawValue</span><span class="s2">();</span>
+    <span class="s0">this</span><span class="s2">.</span><span class="s1">form</span><span class="s2">.</span><span class="s1">patchValue</span><span class="s2">({ </span><span class="s1">sourceLanguage</span><span class="s2">: </span><span class="s1">targetLanguage</span><span class="s2">, </span><span class="s1">targetLanguage</span><span class="s2">: </span><span class="s1">sourceLanguage </span><span class="s2">});</span>
+  <span class="s2">}</span>
+
+  <span class="s0">protected </span><span class="s1">submit</span><span class="s2">(): </span><span class="s0">void </span><span class="s2">{</span>
+    <span class="s0">const </span><span class="s2">{ </span><span class="s1">sourceLanguage</span><span class="s2">, </span><span class="s1">targetLanguage</span><span class="s2">, </span><span class="s1">modelId </span><span class="s2">} = </span><span class="s0">this</span><span class="s2">.</span><span class="s1">form</span><span class="s2">.</span><span class="s1">getRawValue</span><span class="s2">();</span>
+    <span class="s0">const </span><span class="s1">code </span><span class="s2">= </span><span class="s0">this</span><span class="s2">.</span><span class="s1">code</span><span class="s2">();</span>
+
+    <span class="s0">const </span><span class="s1">problem </span><span class="s2">= </span><span class="s0">this</span><span class="s2">.</span><span class="s1">validate</span><span class="s2">(</span><span class="s1">code</span><span class="s2">, </span><span class="s1">sourceLanguage</span><span class="s2">, </span><span class="s1">targetLanguage</span><span class="s2">, </span><span class="s1">modelId</span><span class="s2">);</span>
+    <span class="s0">if </span><span class="s2">(</span><span class="s1">problem</span><span class="s2">) {</span>
+      <span class="s0">this</span><span class="s2">.</span><span class="s1">error</span><span class="s2">.</span><span class="s1">set</span><span class="s2">(</span><span class="s1">problem</span><span class="s2">);</span>
+      <span class="s0">return</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s0">this</span><span class="s2">.</span><span class="s1">loading</span><span class="s2">.</span><span class="s1">set</span><span class="s2">(</span><span class="s0">true</span><span class="s2">);</span>
+    <span class="s0">this</span><span class="s2">.</span><span class="s1">error</span><span class="s2">.</span><span class="s1">set</span><span class="s2">(</span><span class="s0">null</span><span class="s2">);</span>
+    <span class="s0">this</span><span class="s2">.</span><span class="s1">result</span><span class="s2">.</span><span class="s1">set</span><span class="s2">(</span><span class="s0">null</span><span class="s2">);</span>
+    <span class="s0">this</span><span class="s2">.</span><span class="s1">ai</span><span class="s2">.</span><span class="s1">process</span><span class="s2">({ </span><span class="s1">operation</span><span class="s2">: </span><span class="s3">'TRANSLATE'</span><span class="s2">, </span><span class="s1">sourceLanguage</span><span class="s2">, </span><span class="s1">targetLanguage</span><span class="s2">, </span><span class="s1">modelId</span><span class="s2">, </span><span class="s1">code </span><span class="s2">}).</span><span class="s1">subscribe</span><span class="s2">({</span>
+      <span class="s1">next</span><span class="s2">: (</span><span class="s1">response</span><span class="s2">) =&gt; {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">result</span><span class="s2">.</span><span class="s1">set</span><span class="s2">({</span>
+          <span class="s1">original</span><span class="s2">: </span><span class="s1">code</span><span class="s2">,</span>
+          <span class="s1">sourceLanguage</span><span class="s2">,</span>
+          <span class="s1">resultLanguage</span><span class="s2">: </span><span class="s1">targetLanguage</span><span class="s2">,</span>
+          <span class="s1">modelLabel</span><span class="s2">: </span><span class="s0">this</span><span class="s2">.</span><span class="s1">ai</span><span class="s2">.</span><span class="s1">models</span><span class="s2">().</span><span class="s1">find</span><span class="s2">((</span><span class="s1">m</span><span class="s2">) =&gt; </span><span class="s1">m</span><span class="s2">.</span><span class="s1">id </span><span class="s2">=== </span><span class="s1">modelId</span><span class="s2">)?.</span><span class="s1">label </span><span class="s2">?? </span><span class="s1">modelId</span><span class="s2">,</span>
+          <span class="s1">response</span><span class="s2">,</span>
+        <span class="s2">});</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">loading</span><span class="s2">.</span><span class="s1">set</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+      <span class="s2">},</span>
+      <span class="s1">error</span><span class="s2">: (</span><span class="s1">err</span><span class="s2">: </span><span class="s1">unknown</span><span class="s2">) =&gt; {</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">error</span><span class="s2">.</span><span class="s1">set</span><span class="s2">(</span><span class="s1">errorMessage</span><span class="s2">(</span><span class="s1">err</span><span class="s2">));</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">loading</span><span class="s2">.</span><span class="s1">set</span><span class="s2">(</span><span class="s0">false</span><span class="s2">);</span>
+      <span class="s2">},</span>
+    <span class="s2">});</span>
+  <span class="s2">}</span>
+
+  <span class="s0">private </span><span class="s1">validate</span><span class="s2">(</span><span class="s1">code</span><span class="s2">: </span><span class="s1">string</span><span class="s2">, </span><span class="s1">source</span><span class="s2">: </span><span class="s1">LanguageCode</span><span class="s2">, </span><span class="s1">target</span><span class="s2">: </span><span class="s1">LanguageCode</span><span class="s2">, </span><span class="s1">modelId</span><span class="s2">: </span><span class="s1">string</span><span class="s2">): </span><span class="s1">string </span><span class="s2">| </span><span class="s0">null </span><span class="s2">{</span>
+    <span class="s0">if </span><span class="s2">(!</span><span class="s1">code</span><span class="s2">.</span><span class="s1">trim</span><span class="s2">()) {</span>
+      <span class="s0">return </span><span class="s3">'Escribe o carga el código que quieres traducir.'</span><span class="s2">;</span>
+    <span class="s2">}</span>
+    <span class="s0">if </span><span class="s2">(</span><span class="s1">code</span><span class="s2">.</span><span class="s1">length </span><span class="s2">&gt; </span><span class="s1">MAX_CODE_CHARS</span><span class="s2">) {</span>
+      <span class="s0">return </span><span class="s3">`El código supera el máximo de </span><span class="s1">$</span><span class="s2">{</span><span class="s1">MAX_CODE_CHARS</span><span class="s2">} </span><span class="s3">caracteres.`</span><span class="s2">;</span>
+    <span class="s2">}</span>
+    <span class="s0">if </span><span class="s2">(</span><span class="s1">source </span><span class="s2">=== </span><span class="s1">target</span><span class="s2">) {</span>
+      <span class="s0">return </span><span class="s3">'Elige un lenguaje de destino distinto al de origen. Para analizar el mismo lenguaje usa &quot;Mejorar código&quot;.'</span><span class="s2">;</span>
+    <span class="s2">}</span>
+    <span class="s0">if </span><span class="s2">(!</span><span class="s1">modelId</span><span class="s2">) {</span>
+      <span class="s0">return </span><span class="s3">'Elige un modelo de IA.'</span><span class="s2">;</span>
+    <span class="s2">}</span>
+    <span class="s0">return null</span><span class="s2">;</span>
+  <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>
