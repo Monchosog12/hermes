@@ -8,12 +8,10 @@ public interface CRUDOperation<T> {
 	public int crear(T dato);
 	
 	public int eliminarPorId(Long id);
-	
-	public int eliminarPorUsername(String username);
-	
+		
 	public List<T> getAll();
 	
-	public int actualizarUsuarioPorId(Long id, T nuevoDato);
+	public int actualizarPorId(Long id, T nuevoDato);
 	
 	public boolean exist(Long id);
 

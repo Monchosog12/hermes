@@ -1,6 +1,5 @@
 package co.edu.unbosque.hermes.dto;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 import co.edu.unbosque.hermes.entity.Usuario.Rol;
@@ -12,7 +11,6 @@ public class UsuarioDTO {
 	private String username;
 	private String password;
 	private Rol rol;
-	private TraduccionDTO[] traduccion;
 
 	public UsuarioDTO() {
 		// TODO Auto-generated constructor stub
@@ -65,21 +63,9 @@ public class UsuarioDTO {
 		this.rol = rol;
 	}
 
-	public TraduccionDTO[] getTraduccion() {
-		return traduccion;
-	}
-
-	public void setTraduccion(TraduccionDTO[] traduccion) {
-		this.traduccion = traduccion;
-	}
-
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(traduccion);
-		result = prime * result + Objects.hash(email, id, password, rol, username);
-		return result;
+		return Objects.hash(email, id, password, rol, username);
 	}
 
 	@Override
@@ -93,13 +79,13 @@ public class UsuarioDTO {
 		UsuarioDTO other = (UsuarioDTO) obj;
 		return Objects.equals(email, other.email) && Objects.equals(id, other.id)
 				&& Objects.equals(password, other.password) && rol == other.rol
-				&& Arrays.equals(traduccion, other.traduccion) && Objects.equals(username, other.username);
+				&& Objects.equals(username, other.username);
 	}
 
 	@Override
 	public String toString() {
 		return "UsuarioDTO [id=" + id + ", email=" + email + ", username=" + username + ", password=" + password
-				+ ", rol=" + rol + ", traduccion=" + Arrays.toString(traduccion) + "]";
+				+ ", rol=" + rol + "]";
 	}
 
 }
