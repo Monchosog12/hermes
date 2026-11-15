@@ -58,5 +58,6 @@ export class Aimodels {
     label: OPERATION_LABELS[code],
     help: OPERATION_HELP[code],
   }));
-  protected readonly maxChars = MAX_CODE_CHARS;
+  // Formateado aquí porque este componente no está declarado en ningún NgModule (sin DecimalPipe).
+  protected readonly maxChars = MAX_CODE_CHARS.toLocaleString('es-CO');
 }

@@ -1,12 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-footercomponent',
   standalone: false,
-  templateUrl: './footercomponent.html',
   styleUrl: './footercomponent.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './footercomponent.html',
 })
-export class Footercomponent {
-  protected readonly year = new Date().getFullYear();
-}
+export class Footercomponent {}

@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import co.edu.unbosque.hermes.entity.Usuario;
 import co.edu.unbosque.hermes.repository.UsuarioRepository;
+import co.edu.unbosque.hermes.util.AESUtil;
 
 @Configuration
 public class LoadDataBase {
@@ -21,22 +22,44 @@ public class LoadDataBase {
 	@Bean
 	CommandLineRunner initDatabase(UsuarioRepository userRepo, PasswordEncoder passwordEncoder) {
 		return args -> {
-			Optional<Usuario> found = userRepo.findByUsername("admin");
-			if (found.isPresent()) {
-				log.info("El administrador ya existe, omitiendo la creación del administrador");
-			} else {
-				Usuario adminUser = new Usuario("admin@hermes.com", "admin", passwordEncoder.encode("12345678"), Usuario.Rol.ADMIN);
-				userRepo.save(adminUser);
-				log.info("Precargando usuario administrador");
-			}
-			Optional<Usuario> found2 = userRepo.findByUsername("normaluser");
-			if (found2.isPresent()) {
-				log.info("El usuario normal ya existe, omitiendo la creación del usuario normal...");
-			} else {
-				Usuario normalUser = new Usuario("normaluser@hermes.com", "normaluser", passwordEncoder.encode("1234567890"), Usuario.Rol.USER);
-				userRepo.save(normalUser);
-				log.info("Precargando usuario normal");
-			}
+			asegurarUsuario(userRepo, passwordEncoder, "admin", "admin@hermes.com", "12345678", Usuario.Rol.ADMIN);
+			asegurarUsuario(userRepo, passwordEncoder, "normaluser", "normaluser@hermes.com", "1234567890",
+					Usuario.Rol.USER);
 		};
+	}
+
+	/**
+	 * Garantiza que el usuario precargado exista con usuario y correo cifrados, igual
+	 * que los usuarios creados desde el registro (el login busca por el username
+	 * cifrado).
+	 * <ul>
+	 * <li>Si ya existe cifrado, no hace nada.</li>
+	 * <li>Si existe sin cifrar (versiones anteriores de esta clase), le cifra
+	 * usuario y correo conservando id, contraseña y rol.</li>
+	 * <li>Si no existe, lo crea cifrado.</li>
+	 * </ul>
+	 */
+	private static void asegurarUsuario(UsuarioRepository userRepo, PasswordEncoder passwordEncoder, String username,
+			String email, String password, Usuario.Rol rol) {
+		String usernameCifrado = AESUtil.encrypt(username);
+
+		if (userRepo.findByUsername(usernameCifrado).isPresent()) {
+			log.info("El usuario '{}' ya existe, omitiendo su creación", username);
+			return;
+		}
+
+		Optional<Usuario> sinCifrar = userRepo.findByUsername(username);
+		if (sinCifrar.isPresent()) {
+			Usuario usuario = sinCifrar.get();
+			usuario.setUsername(usernameCifrado);
+			usuario.setEmail(AESUtil.encrypt(usuario.getEmail() != null ? usuario.getEmail() : email));
+			userRepo.save(usuario);
+			log.info("Usuario '{}' migrado: usuario y correo ahora están cifrados", username);
+			return;
+		}
+
+		Usuario nuevo = new Usuario(AESUtil.encrypt(email), usernameCifrado, passwordEncoder.encode(password), rol);
+		userRepo.save(nuevo);
+		log.info("Precargando usuario '{}'", username);
 	}
 }
