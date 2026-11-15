@@ -6,6 +6,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import co.edu.unbosque.hermes.repository.UsuarioRepository;
+import co.edu.unbosque.hermes.entity.Usuario;
+import co.edu.unbosque.hermes.util.AESUtil;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService{
@@ -33,11 +35,17 @@ public class UserDetailsServiceImpl implements UserDetailsService{
 	   */
 	  @Override
 	  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-	    // Busca el usuario en el repositorio y lanza una excepción si no se encuentra
-	    return userRepository
-	        .findByUsername(username)
+	    // El username está cifrado en la base de datos: se cifra el parámetro para
+	    // buscarlo
+	    Usuario usuario = userRepository
+	        .findByUsername(AESUtil.encrypt(username))
 	        .orElseThrow(
 	            () -> new UsernameNotFoundException("User not found with username: " + username));
+	    // Se descifra para que el JWT lleve el username en texto normal. Si quedara
+	    // cifrado, el filtro JWT lo volvería a cifrar al buscarlo y no lo encontraría.
+	    usuario.setUsername(AESUtil.decrypt(usuario.getUsername()));
+	    usuario.setEmail(AESUtil.decrypt(usuario.getEmail()));
+	    return usuario;
 	  }
 
 }
