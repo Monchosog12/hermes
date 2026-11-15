@@ -1,5 +1,5 @@
 import { Extension } from '@codemirror/state';
-import { LanguageCode } from '../models/ai.models';
+import { LanguageCode } from '../ai/ai.models';
 
 export interface LanguageOption {
   code: LanguageCode;

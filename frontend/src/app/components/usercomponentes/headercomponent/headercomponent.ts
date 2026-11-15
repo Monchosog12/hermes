@@ -1,21 +1,38 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { AuthService } from '../../auth/auth.service';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RegisterService } from '../../../services/register.service';
+import { RegisterModel } from '../../../models/register.model';
+import { finalize } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { LoginService } from '../../../services/login.service';
+import { LoginModel } from '../../../models/login.model';
+import { Router } from '@angular/router';
+
+// Bootstrap se carga globalmente desde index.html (bootstrap.bundle.min.js).
+declare const bootstrap: any;
+
 
 @Component({
   selector: 'app-headercomponent',
   standalone: false,
-  templateUrl: './headercomponent.html',
   styleUrl: './headercomponent.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './headercomponent.html',
 })
 export class Headercomponent {
-  protected readonly auth = inject(AuthService);
-}
   private readonly fb = inject(FormBuilder);
   private readonly servicio = inject(RegisterService);
   private readonly snackBar = inject(MatSnackBar);
+  private readonly loginServicio = inject(LoginService);
+  private readonly router = inject(Router);
 
   cargando = false;
+  cargandoLogin = false;
+
+  formularioLogin = this.fb.nonNullable.group({
+    username: ['', [Validators.required]],
+    password: ['', [Validators.required]],
+  });
 
   formulario = this.fb.nonNullable.group({
     username: ['', [Validators.required, Validators.minLength(3)]],
@@ -47,6 +64,48 @@ export class Headercomponent {
       });
   }
 
+  iniciarSesion(): void {
+    if (this.cargandoLogin) return;
+
+    if (this.formularioLogin.invalid) {
+      this.formularioLogin.markAllAsTouched();
+      return;
+    }
+
+    const datos: LoginModel = this.formularioLogin.getRawValue();
+    this.cargandoLogin = true;
+
+    this.loginServicio
+      .login(datos)
+      .pipe(finalize(() => (this.cargandoLogin = false)))
+      .subscribe({
+        next: () => {
+          this.mostrarMensaje(`Bienvenido, ${datos.username}.`, 'exito');
+          this.formularioLogin.reset();
+          this.cerrarModal('modalLogin');
+          if (this.loginServicio.obtenerRol() === 'ADMIN') {
+            this.router.navigate(['/admin/principaladmin']);
+          }
+        },
+        error: (error: HttpErrorResponse) => {
+          this.mostrarMensaje(this.obtenerMensajeErrorLogin(error), 'error');
+        },
+      });
+  }
+
+  cerrarSesion(): void {
+    this.loginServicio.cerrarSesion();
+    this.mostrarMensaje('Sesión cerrada.', 'exito');
+  }
+
+  get sesionIniciada(): boolean {
+    return this.loginServicio.estaLogueado();
+  }
+
+  get usuarioActual(): string | null {
+    return this.loginServicio.obtenerUsuario();
+  }
+
   get username() {
     return this.formulario.controls.username;
   }
@@ -64,6 +123,24 @@ export class Headercomponent {
       panelClass: tipo === 'exito' ? ['snack-exito'] : ['snack-error'],
     });
   }
+  private cerrarModal(id: string): void {
+    const elemento = document.getElementById(id);
+    if (elemento) {
+      bootstrap.Modal.getOrCreateInstance(elemento).hide();
+    }
+  }
+
+  private obtenerMensajeErrorLogin(error: HttpErrorResponse): string {
+    switch (error.status) {
+      case 0:
+        return 'No hay conexión con el servidor.';
+      case 401:
+        return 'Usuario o contraseña incorrectos.';
+      default:
+        return 'No fue posible iniciar sesión. Intenta de nuevo.';
+    }
+  }
+
   private obtenerMensajeError(error: HttpErrorResponse): string {
     switch (error.status) {
       case 0:

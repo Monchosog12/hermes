@@ -24,9 +24,12 @@
         [value]="lenguajeOrigen"
         (change)="lenguajeOrigen = $any($event.target).value">
 
-        <option value="javascript">JavaScript</option>
-        <option value="java">Java</option>
-        <option value="python">Python</option>
+        <option value="JAVASCRIPT">JavaScript</option>
+        <option value="TYPESCRIPT">TypeScript</option>
+        <option value="JAVA">Java</option>
+        <option value="PYTHON">Python</option>
+        <option value="CPP">C++</option>
+        <option value="CSHARP">C#</option>
       </select>
 
     </div>
@@ -46,9 +49,12 @@
         id="targetLanguage"
         [value]="lenguajeDestino"
         (change)="lenguajeDestino = $any($event.target).value">
-        <option value="javascript">JavaScript</option>
-        <option value="java">Java</option>
-        <option value="python">Python</option>
+        <option value="JAVASCRIPT">JavaScript</option>
+        <option value="TYPESCRIPT">TypeScript</option>
+        <option value="JAVA">Java</option>
+        <option value="PYTHON">Python</option>
+        <option value="CPP">C++</option>
+        <option value="CSHARP">C#</option>
       </select>
     </div>
 
@@ -64,9 +70,8 @@
       </div>
 
       <app-codeeditorcomponent
-        [codigo]="codigoOrigen"
-        [lenguaje]="lenguajeOrigen"
-        (codigoChange)="codigoOrigen = $event">
+        [(value)]="codigoOrigen"
+        [language]="lenguajeOrigen">
       </app-codeeditorcomponent>
     </section>
 
@@ -78,9 +83,8 @@
       </div>
 
       <app-codeeditorcomponent
-        [codigo]="codigoDestino"
-        [lenguaje]="lenguajeDestino"
-        (codigoChange)="codigoDestino = $event">
+        [(value)]="codigoDestino"
+        [language]="lenguajeDestino">
       </app-codeeditorcomponent>
     </section>
 
@@ -105,16 +109,31 @@
     <button
       type="button"
       class="primary-button"
+      [disabled]="cargando"
       (click)="traducir()">
-      Traducir código
+      {{ cargando ? 'Traduciendo…' : 'Traducir código' }}
       <span aria-hidden="true">→</span>
     </button>
 
   </div>
 
+  @if (mejoras.length > 0) {
+    <section class="suggestions-panel" aria-labelledby="suggestionsTitle">
+      <div class="editor-header">
+        <span class="status-dot"></span>
+        <h2 id="suggestionsTitle">Sugerencias de la IA</h2>
+      </div>
+      <ul>
+        @for (mejora of mejoras; track $index) {
+          <li>{{ mejora }}</li>
+        }
+      </ul>
+    </section>
+  }
+
   <p class="translator-notice">
-    La traducción automática estará disponible cuando conectemos
-    el servicio correspondiente.
+    La traducción la realiza una IA y puede tardar unos segundos.
+    Revisa el resultado antes de usarlo.
   </p>
 </div>
 </section>

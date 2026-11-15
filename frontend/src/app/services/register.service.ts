@@ -1,7 +1,6 @@
 import { inject, Injectable, Service } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RegisterModel } from '../models/register.model';
-import { AnswerregisterModel } from '../models/answerregister.model';
 
 @Injectable({ providedIn: 'root' })
 export class RegisterService {
@@ -9,10 +8,11 @@ export class RegisterService {
   private readonly urlbase = 'http://localhost:8080';
 
   register(datos: RegisterModel) {
-    return this.cliente.post<AnswerregisterModel>(
+    // El backend responde texto plano ("Usuario registrado exitosamente"), no JSON.
+    return this.cliente.post(
       `${this.urlbase}/auth/register`,
       datos,
-      {observe: 'response'}
+      { observe: 'response', responseType: 'text' }
     );
   }
 }
