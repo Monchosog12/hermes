@@ -25,7 +25,10 @@ import com.google.gson.JsonParser;
 
 import co.edu.unbosque.hermes.dto.ChatResponseDTO;
 import co.edu.unbosque.hermes.dto.RespuestaIADTO;
+import org.springframework.http.HttpStatus;
+
 import co.edu.unbosque.hermes.dto.TraduccionRequestDTO;
+import co.edu.unbosque.hermes.exception.IAServiceException;
 
 public class ExternalHTTPRequestHandler {
 
@@ -35,11 +38,24 @@ public class ExternalHTTPRequestHandler {
 	public static final String COHERE_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 	public static final String MODEL = "cohere/north-mini-code:free";
+	public static final String QWEN_URL = COHERE_URL;
 
-	/**
-	 * La api key se lee de la variable de entorno, nunca se escribe en el código.
-	 */
+	public static final String QWEN_MODEL = "qwen/qwen3-coder:free";
 	private static final String API_KEY = System.getenv("OPENROUTER_API_KEY_COHERE_MINI_CODE");
+	private static final String API_KEY_QWEN = leerKeyQwen();
+
+	private static String leerKeyQwen() {
+		String k = System.getenv("OPENROUTER_API_KEY_QWEN");
+		return (k == null || k.isBlank()) ? API_KEY : k;
+	}
+
+	public static String getApiKey() {
+		return API_KEY;
+	}
+
+	public static String getApiKeyQwen() {
+		return API_KEY_QWEN;
+	}
 
 	private static final String MAIN_PROMPT = """
 			Eres un ingeniero de software experto en múltiples lenguajes.
@@ -79,14 +95,30 @@ public class ExternalHTTPRequestHandler {
 			System.out.println("La API respondió con status code -> " + resp.getStatuscode());
 		}
 
-//		System.out.println("//// GET ////");
-//		System.out.println(doGet("https://openrouter.ai/api/v1/models"));
+		System.out.println("//// POST QWEN ////");
+		if (API_KEY_QWEN == null || API_KEY_QWEN.isBlank()) {
+			System.out.println("Falta la variable de entorno OPENROUTER_API_KEY_QWEN");
+			return;
+		}
+		String jsonQwen = crearBodyTraduccion(req, QWEN_MODEL);
+		ChatResponseDTO respQwen = doPostAndConvertToDto(QWEN_URL, jsonQwen, API_KEY_QWEN);
+		System.out.println(respQwen.toString());
+		if (respQwen.getStatuscode() == 200 && respQwen.getPrimerContenido() != null) {
+			System.out.println(parsearRespuesta(respQwen.getPrimerContenido()));
+		} else {
+			System.out.println("La API respondió con status code -> " + respQwen.getStatuscode());
+		}
+
 	}
 
 	public static ChatResponseDTO doPostAndConvertToDto(String url, String json) {
+		return doPostAndConvertToDto(url, json, API_KEY);
+	}
+
+	public static ChatResponseDTO doPostAndConvertToDto(String url, String json, String apiKey) {
 		HttpRequest request = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(json))
 				.uri(URI.create(url)).header("Content-Type", "application/json")
-				.setHeader("Authorization", "Bearer " + API_KEY).build();
+				.setHeader("Authorization", "Bearer " + apiKey).build();
 
 		HttpResponse<String> response = null;
 		try {
@@ -94,10 +126,20 @@ public class ExternalHTTPRequestHandler {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
 			e.printStackTrace();
 		}
+		if (response == null) {
+			throw new IAServiceException(HttpStatus.BAD_GATEWAY, "No se pudo conectar con el proveedor de IA.", null,
+					null);
+		}
 		String body = response.body();
-		ChatResponseDTO chat = new GsonBuilder().create().fromJson(body, ChatResponseDTO.class);
+		ChatResponseDTO chat = null;
+		try {
+			chat = new GsonBuilder().create().fromJson(body, ChatResponseDTO.class);
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		}
 		if (chat == null) {
 			chat = new ChatResponseDTO();
 		}
@@ -186,7 +228,6 @@ public class ExternalHTTPRequestHandler {
 
 	public static String doPut(String url, String json) {
 
-		// add json header
 		HttpRequest request = HttpRequest.newBuilder().PUT(HttpRequest.BodyPublishers.ofString(json))
 				.uri(URI.create(url)).setHeader("User-Agent", "Java 11 HttpClient Bot")
 				.header("Content-Type", "application/json").build();
@@ -230,13 +271,15 @@ public class ExternalHTTPRequestHandler {
 		return prettyJsonString;
 	}
 
-	/**
-	 * Arma el JSON que espera /chat/completions: {"model": "...", "messages":
-	 * [{"role": "system", ...}, {"role": "user", ...}]}. Se construye con
-	 * JsonObject para que Gson escape las comillas y saltos de línea del código del
-	 * usuario.
-	 */
 	public static String crearBodyTraduccion(TraduccionRequestDTO req) {
+		return crearBodyTraduccion(req, MODEL);
+	}
+
+	/**
+	 * Igual que {@link #crearBodyTraduccion(TraduccionRequestDTO)} pero con el
+	 * modelo indicado.
+	 */
+	public static String crearBodyTraduccion(TraduccionRequestDTO req, String model) {
 		String origen = (req.getLenguajeOrigen() == null || req.getLenguajeOrigen().isBlank()) ? "detéctalo tú"
 				: req.getLenguajeOrigen();
 
@@ -254,7 +297,7 @@ public class ExternalHTTPRequestHandler {
 		messages.add(crearMensaje("user", mensaje));
 
 		JsonObject body = new JsonObject();
-		body.addProperty("model", MODEL);
+		body.addProperty("model", model);
 		body.add("messages", messages);
 		return new GsonBuilder().create().toJson(body);
 	}
@@ -266,13 +309,6 @@ public class ExternalHTTPRequestHandler {
 		return m;
 	}
 
-	/**
-	 * Convierte el texto de la IA en {@link RespuestaIADTO}. Aunque el prompt pide
-	 * JSON puro, algunos modelos lo envuelven en ```json ... ``` o añaden texto,
-	 * así que se extrae lo que hay entre la primera '{' y la última '}'. Si aun así
-	 * no es JSON válido, se guarda el texto completo como código para no perder la
-	 * respuesta.
-	 */
 	public static RespuestaIADTO parsearRespuesta(String contenido) {
 		if (contenido == null || contenido.isBlank()) {
 			throw new IllegalStateException("La IA devolvió una respuesta vacía");
@@ -292,6 +328,26 @@ public class ExternalHTTPRequestHandler {
 			}
 		}
 		return new RespuestaIADTO(contenido.strip(), null, List.of());
+	}
+
+	public static RespuestaIADTO traducir(TraduccionRequestDTO req, String url, String model, String apiKey) {
+		if (apiKey == null || apiKey.isBlank()) {
+			throw new IAServiceException(HttpStatus.INTERNAL_SERVER_ERROR,
+					"Falta la api key del modelo " + model + " (variable de entorno).", null, null);
+		}
+		String json = crearBodyTraduccion(req, model);
+		ChatResponseDTO res = doPostAndConvertToDto(url, json, apiKey);
+
+		if (res.getStatuscode() == 429) {
+			throw new IAServiceException(HttpStatus.SERVICE_UNAVAILABLE,
+					"El modelo de IA está saturado en este momento. Intenta de nuevo en unos minutos.",
+					res.getRetryAfter() != null ? res.getRetryAfter() : "60", null);
+		}
+		if (res.getStatuscode() < 200 || res.getStatuscode() >= 300 || res.getPrimerContenido() == null) {
+			throw new IAServiceException(HttpStatus.BAD_GATEWAY,
+					"El proveedor de IA respondió con el código " + res.getStatuscode() + ".", null, null);
+		}
+		return parsearRespuesta(res.getPrimerContenido());
 	}
 
 }
