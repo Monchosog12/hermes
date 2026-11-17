@@ -36,13 +36,16 @@ public class ExternalHTTPRequestHandler {
 			.connectTimeout(Duration.ofSeconds(10)).build();
 
 	public static final String COHERE_URL = "https://openrouter.ai/api/v1/chat/completions";
+	public static final String NEMOTRON_URL = COHERE_URL;
+	public static final String PARTICLE_URL = COHERE_URL;
 
 	public static final String MODEL = "cohere/north-mini-code:free";
-	public static final String NEMOTRON_URL = COHERE_URL;
-
 	public static final String NEMOTRON_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free";
+	public static final String PARTICLE_MODEL = "particle-ai/particle-1:free";
+	
 	private static final String API_KEY_COHERE = System.getenv("OPENROUTER_API_KEY_COHERE_MINI_CODE");
 	private static final String API_KEY_NEMOTRON = System.getenv("OPENROUTER_API_KEY_NVIDIA_NEMOTRON");
+	private static final String API_KEY_PARTICLE = System.getenv("OPENROUTER_API_KEY_PARTICLE");
 
 	
 
@@ -54,12 +57,7 @@ public class ExternalHTTPRequestHandler {
 		return API_KEY_NEMOTRON;
 	}
 	
-	public static String leerKeyParticle() {
-		
-		String k = System.getenv("OPENROUTER_API_KEY_PARTICLE");
-		return (k == null || k.isBlank()) ? API_KEY: k;
-	}
-	
+
 
 	public static String getApiKeyParticle() {
 		return API_KEY_PARTICLE;

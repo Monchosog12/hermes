@@ -36,7 +36,7 @@ export class Traductorcomponent {
   readonly modelos: ModeloIA[] = [
     { endpoint: 'cohere', nombre: 'Cohere North Mini Code', descripcion: 'Rápido y ligero' },
     { endpoint: 'nemotron', nombre: 'NVIDIA Nemotron 3 Ultra', descripcion: 'Mayor capacidad de razonamiento' },
-    { endpoint: 'qwen', nombre: 'Qwen3 Coder', descripcion: 'Especializado en código' },
+    { endpoint: 'particle', nombre: 'Particle Coder', descripcion: 'Especializado en código' },
   ];
 
   modeloSeleccionado: ModeloIA = this.modelos[0];
