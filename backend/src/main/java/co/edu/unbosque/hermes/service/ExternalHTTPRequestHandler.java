@@ -38,14 +38,14 @@ public class ExternalHTTPRequestHandler {
 	public static final String COHERE_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 	public static final String MODEL = "cohere/north-mini-code:free";
-	public static final String QWEN_URL = COHERE_URL;
+	private static final String API_KEY = System.getenv("OPENROUTER_API_KEY_COHERE_MINI_CODE");
 
 	public static final String QWEN_MODEL = "qwen/qwen3-coder:free";
-	private static final String API_KEY = System.getenv("OPENROUTER_API_KEY_COHERE_MINI_CODE");
+	public static final String QWEN_URL = COHERE_URL;
 	private static final String API_KEY_QWEN = leerKeyQwen();
 
-	private static final String PARTICLE_URL= COHERE_URL;
-	private static final String PARTICLE_MODEL ="particle-ai/particle-1:free";
+	public static final String PARTICLE_URL= COHERE_URL;
+	public static final String PARTICLE_MODEL ="particle-ai/particle-1:free";
 	private static final String API_KEY_PARTICLE = leerKeyParticle();
 
 	private static String leerKeyQwen() {
@@ -66,6 +66,12 @@ public class ExternalHTTPRequestHandler {
 		String k = System.getenv("OPENROUTER_API_KEY_PARTICLE");
 		return (k == null || k.isBlank()) ? API_KEY: k;
 	}
+	
+
+	public static String getApiKeyParticle() {
+		return API_KEY_PARTICLE;
+	}
+
 
 	private static final String MAIN_PROMPT = """
 			Eres un ingeniero de software experto en múltiples lenguajes.
