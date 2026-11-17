@@ -1,15 +1,5 @@
 import { Component } from '@angular/core';
-type EstadoSolicitud = 'Pendiente' | 'En proceso' | 'Atendida';
-
-interface Solicitud {
-  id: number;
-  usuario: string;
-  correo: string;
-  tipo: string;
-  fecha: string;
-  estado: EstadoSolicitud;
-  descripcion: string;
-}
+import { EstadoSolicitud, Solicitud } from '../../../models/admin/solicitud.model';
 
 @Component({
   selector: 'app-solicitudesadmincomponent',

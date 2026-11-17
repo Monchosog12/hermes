@@ -1,5 +1,5 @@
 
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -13,6 +13,7 @@ import {
 } from '../../models/admin/admin.models';
 
 import { Page } from '../../models/common/page.models';
+import { LoginService } from '../login.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +21,17 @@ import { Page } from '../../models/common/page.models';
 export class AdminService {
 
   private readonly http = inject(HttpClient);
+  private readonly loginServicio = inject(LoginService);
 
   private readonly api = `${environment.apiUrl}/admin`;
+
+  /** Arma el header "Authorization: Bearer <token>" con el token guardado al iniciar sesión. */
+  private obtenerHeaders(): HttpHeaders {
+    const token = this.loginServicio.obtenerToken();
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+  }
 
   users(page: number, size = 10): Observable<Page<AdminUser>> {
     const params = new HttpParams()
@@ -30,7 +40,7 @@ export class AdminService {
 
     return this.http.get<Page<AdminUser>>(
       `${this.api}/users`,
-      { params }
+      { params, headers: this.obtenerHeaders() }
     );
   }
 
@@ -40,27 +50,30 @@ export class AdminService {
   ): Observable<AdminUser> {
     return this.http.patch<AdminUser>(
       `${this.api}/users/${id}`,
-      body
+      body,
+      { headers: this.obtenerHeaders() }
     );
   }
 
   sendPasswordReset(id: number): Observable<void> {
     return this.http.post<void>(
       `${this.api}/users/${id}/password-reset`,
-      {}
+      {},
+      { headers: this.obtenerHeaders() }
     );
   }
 
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(
-      `${this.api}/users/${id}`
+      `${this.api}/users/${id}`,
+      { headers: this.obtenerHeaders() }
     );
   }
 
   stats(range: DateRange): Observable<UsageStats> {
     return this.http.get<UsageStats>(
       `${this.api}/stats`,
-      { params: this.rangeParams(range) }
+      { params: this.rangeParams(range), headers: this.obtenerHeaders() }
     );
   }
 
@@ -71,7 +84,7 @@ export class AdminService {
 
     return this.http.get<Page<AuditLog>>(
       `${this.api}/audit`,
-      { params }
+      { params, headers: this.obtenerHeaders() }
     );
   }
 
@@ -80,6 +93,7 @@ export class AdminService {
       `${this.api}/reports/requests`,
       {
         params: this.rangeParams(range),
+        headers: this.obtenerHeaders(),
         responseType: 'blob'
       }
     );

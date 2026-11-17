@@ -1,5 +1,5 @@
 
-import { Component, inject } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs';
@@ -7,6 +7,7 @@ import { LanguageCode } from '../../../models/ai/ai.models';
 import { TraduccionModel } from '../../../models/traduccion.model';
 import { TraduccionService } from '../../../services/traduccion.service';
 import { LoginService } from '../../../services/login.service';
+import { ModeloIA } from '../../../models/ai/modeloia.model';
 
 // Bootstrap se carga globalmente desde index.html (bootstrap.bundle.min.js).
 declare const bootstrap: any;
@@ -18,6 +19,7 @@ declare const bootstrap: any;
   templateUrl: './traductorcomponent.html',
 })
 export class Traductorcomponent {
+
   private readonly servicio = inject(TraduccionService);
   private readonly loginServicio = inject(LoginService);
   private readonly snackBar = inject(MatSnackBar);
@@ -30,6 +32,32 @@ export class Traductorcomponent {
 
   mejoras: string[] = [];
   cargando = false;
+
+  readonly modelos: ModeloIA[] = [
+    { endpoint: 'cohere', nombre: 'Cohere North Mini Code', descripcion: 'Rápido y ligero' },
+    { endpoint: 'nemotron', nombre: 'NVIDIA Nemotron 3 Ultra', descripcion: 'Mayor capacidad de razonamiento' },
+    { endpoint: 'qwen', nombre: 'Qwen3 Coder', descripcion: 'Especializado en código' },
+  ];
+
+  modeloSeleccionado: ModeloIA = this.modelos[0];
+  menuModelosAbierto = false;
+
+  seleccionarModelo(event: MouseEvent): void {
+    event.stopPropagation();
+    this.menuModelosAbierto = !this.menuModelosAbierto;
+  }
+
+  elegirModelo(modelo: ModeloIA): void {
+    this.modeloSeleccionado = modelo;
+    this.menuModelosAbierto = false;
+  }
+
+  // Cierra la lista al hacer clic fuera de ella o al presionar Escape.
+  @HostListener('document:click')
+  @HostListener('document:keydown.escape')
+  cerrarMenuModelos(): void {
+    this.menuModelosAbierto = false;
+  }
 
   traducir(): void {
     if (this.cargando) return;
@@ -53,7 +81,7 @@ export class Traductorcomponent {
     this.cargando = true;
 
     this.servicio
-      .traducir(datos)
+      .traducir(datos, this.modeloSeleccionado.endpoint)
       .pipe(finalize(() => (this.cargando = false)))
       .subscribe({
         next: (respuesta) => {

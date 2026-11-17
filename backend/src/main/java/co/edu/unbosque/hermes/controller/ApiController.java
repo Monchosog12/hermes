@@ -1,10 +1,5 @@
 package co.edu.unbosque.hermes.controller;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +13,6 @@ import co.edu.unbosque.hermes.dto.RespuestaIADTO;
 import co.edu.unbosque.hermes.dto.TraduccionDTO;
 import co.edu.unbosque.hermes.dto.TraduccionRequestDTO;
 import co.edu.unbosque.hermes.entity.Usuario;
-import co.edu.unbosque.hermes.exception.IAServiceException;
 import co.edu.unbosque.hermes.service.ExternalHTTPRequestHandler;
 import co.edu.unbosque.hermes.service.TraduccionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -41,59 +35,21 @@ public class ApiController {
 				guardarTraduccion(req, user, ExternalHTTPRequestHandler.MODEL, respuesta), HttpStatus.ACCEPTED);
 	}
 
-	/** Traducción solo con Qwen3 Coder. Ruta: POST /qwen/traduccion */
-	@PostMapping("/qwen/traduccion")
-	ResponseEntity<TraduccionDTO> traduccionQwen(@RequestBody TraduccionRequestDTO req,
+	/** Traducción solo con Nemotron. Ruta: POST /nemotron/traduccion */
+	@PostMapping("/nemotron/traduccion")
+	ResponseEntity<TraduccionDTO> traduccionNemotron(@RequestBody TraduccionRequestDTO req,
 			@AuthenticationPrincipal Usuario user) {
-		RespuestaIADTO respuesta = ExternalHTTPRequestHandler.traducir(req, ExternalHTTPRequestHandler.QWEN_URL,
-				ExternalHTTPRequestHandler.QWEN_MODEL, ExternalHTTPRequestHandler.getApiKeyQwen());
+		RespuestaIADTO respuesta = ExternalHTTPRequestHandler.traducir(req, ExternalHTTPRequestHandler.NEMOTRON_URL,
+				ExternalHTTPRequestHandler.NEMOTRON_MODEL, ExternalHTTPRequestHandler.getApiKey());
 		return new ResponseEntity<TraduccionDTO>(
-				guardarTraduccion(req, user, ExternalHTTPRequestHandler.QWEN_MODEL, respuesta), HttpStatus.ACCEPTED);
+				guardarTraduccion(req, user, ExternalHTTPRequestHandler.NEMOTRON_MODEL, respuesta),
+				HttpStatus.ACCEPTED);
 	}
 
 	/**
-	 * Usa las dos IA al mismo tiempo: las llamadas a Cohere y a Qwen se lanzan en
-	 * paralelo y se devuelven las dos traducciones. Si una falla, la otra se
-	 * devuelve igual y la que falló trae el motivo del error. Ruta: POST
-	 * /ia/traduccion
+	 * Guarda la traducción cifrada en el historial y devuelve el DTO con texto
+	 * normal.
 	 */
-	@PostMapping("/ia/traduccion")
-	ResponseEntity<Map<String, Object>> traduccionAmbas(@RequestBody TraduccionRequestDTO req,
-			@AuthenticationPrincipal Usuario user) {
-
-		CompletableFuture<RespuestaIADTO> cohere = CompletableFuture.supplyAsync(
-				() -> ExternalHTTPRequestHandler.traducir(req, ExternalHTTPRequestHandler.COHERE_URL,
-						ExternalHTTPRequestHandler.MODEL, ExternalHTTPRequestHandler.getApiKey()));
-		CompletableFuture<RespuestaIADTO> qwen = CompletableFuture.supplyAsync(
-				() -> ExternalHTTPRequestHandler.traducir(req, ExternalHTTPRequestHandler.QWEN_URL,
-						ExternalHTTPRequestHandler.QWEN_MODEL, ExternalHTTPRequestHandler.getApiKeyQwen()));
-
-		Map<String, Object> resultado = new LinkedHashMap<>();
-		resultado.put("cohere", resolver(cohere, req, user, ExternalHTTPRequestHandler.MODEL));
-		resultado.put("qwen", resolver(qwen, req, user, ExternalHTTPRequestHandler.QWEN_MODEL));
-
-		boolean alguna = resultado.values().stream().anyMatch(v -> v instanceof TraduccionDTO);
-		return new ResponseEntity<Map<String, Object>>(resultado, alguna ? HttpStatus.ACCEPTED : HttpStatus.BAD_GATEWAY);
-	}
-
-	/** Espera la respuesta de una IA y la guarda. si falló, devuelve el error. */
-	private Object resolver(CompletableFuture<RespuestaIADTO> futuro, TraduccionRequestDTO req, Usuario user,
-			String modelo) {
-		try {
-			return guardarTraduccion(req, user, modelo, futuro.join());
-		} catch (CompletionException e) {
-			Throwable causa = e.getCause() != null ? e.getCause() : e;
-			Map<String, Object> error = new LinkedHashMap<>();
-			error.put("modelo", modelo);
-			error.put("error", causa.getMessage());
-			if (causa instanceof IAServiceException ia) {
-				error.put("status", ia.getStatus().value());
-			}
-			return error;
-		}
-	}
-
-	/** Guarda la traducción cifrada en el historial y devuelve el DTO con texto normal. */
 	private TraduccionDTO guardarTraduccion(TraduccionRequestDTO req, Usuario user, String modelo,
 			RespuestaIADTO respuesta) {
 		boolean sinOrigen = req.getLenguajeOrigen() == null || req.getLenguajeOrigen().isBlank();
@@ -103,5 +59,4 @@ public class ApiController {
 		dto.setMejoras(respuesta.getMejoras());
 		return traduccionService.guardar(dto);
 	}
-
 }
