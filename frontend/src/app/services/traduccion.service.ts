@@ -42,4 +42,12 @@ export class TraduccionService {
       { headers: this.obtenerHeaders() }
     );
   }
+
+  traducirParticle(datos: TraduccionModel) {
+    return this.cliente.post<AnswertraduccionModel>(
+      `${this.urlbase}/particle/traduccion`,
+      datos,
+      { headers: this.obtenerHeaders() }
+    );
+  }
 }
