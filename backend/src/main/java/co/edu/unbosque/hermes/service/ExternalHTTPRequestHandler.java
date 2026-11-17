@@ -38,11 +38,15 @@ public class ExternalHTTPRequestHandler {
 	public static final String COHERE_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 	public static final String MODEL = "cohere/north-mini-code:free";
-	public static final String QWEN_URL = COHERE_URL;
+	private static final String API_KEY = System.getenv("OPENROUTER_API_KEY_COHERE_MINI_CODE");
 
 	public static final String QWEN_MODEL = "qwen/qwen3-coder:free";
-	private static final String API_KEY = System.getenv("OPENROUTER_API_KEY_COHERE_MINI_CODE");
+	public static final String QWEN_URL = COHERE_URL;
 	private static final String API_KEY_QWEN = leerKeyQwen();
+
+	public static final String PARTICLE_URL= COHERE_URL;
+	public static final String PARTICLE_MODEL ="particle-ai/particle-1:free";
+	private static final String API_KEY_PARTICLE = leerKeyParticle();
 
 	private static String leerKeyQwen() {
 		String k = System.getenv("OPENROUTER_API_KEY_QWEN");
@@ -56,6 +60,18 @@ public class ExternalHTTPRequestHandler {
 	public static String getApiKeyQwen() {
 		return API_KEY_QWEN;
 	}
+	
+	public static String leerKeyParticle() {
+		
+		String k = System.getenv("OPENROUTER_API_KEY_PARTICLE");
+		return (k == null || k.isBlank()) ? API_KEY: k;
+	}
+	
+
+	public static String getApiKeyParticle() {
+		return API_KEY_PARTICLE;
+	}
+
 
 	private static final String MAIN_PROMPT = """
 			Eres un ingeniero de software experto en múltiples lenguajes.
@@ -107,6 +123,19 @@ public class ExternalHTTPRequestHandler {
 			System.out.println(parsearRespuesta(respQwen.getPrimerContenido()));
 		} else {
 			System.out.println("La API respondió con status code -> " + respQwen.getStatuscode());
+		}
+		System.out.println("//// POST PARTICLE ////");
+		if (API_KEY_PARTICLE == null || API_KEY_PARTICLE.isBlank()) {
+			System.out.println("Falta la variable de entorno OPENROUTER_API_KEY_PARTICLE");
+			return;
+		}
+		String jsonParticle = crearBodyTraduccion(req, PARTICLE_MODEL);
+		ChatResponseDTO respParticle = doPostAndConvertToDto(PARTICLE_URL, jsonParticle, API_KEY_PARTICLE);
+		System.out.println(respParticle.toString());
+		if (respParticle.getStatuscode() == 200 && respParticle.getPrimerContenido() != null) {
+			System.out.println(parsearRespuesta(respParticle.getPrimerContenido()));
+		} else {
+			System.out.println("La API respondió con status code -> " + respParticle.getStatuscode());
 		}
 
 	}

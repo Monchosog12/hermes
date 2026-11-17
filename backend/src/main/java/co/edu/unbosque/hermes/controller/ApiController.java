@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @Transactional
-@Tag(name = "Api IA", description = "Endpoints para Cohere IA y Qwen IA")
+@Tag(name = "Api IA", description = "Endpoints para Cohere IA, Qwen IA y Particle IA")
 public class ApiController {
 
 	@Autowired
@@ -51,9 +51,20 @@ public class ApiController {
 				guardarTraduccion(req, user, ExternalHTTPRequestHandler.QWEN_MODEL, respuesta), HttpStatus.ACCEPTED);
 	}
 
+	/** Traducción solo con Particle-1 Coder. Ruta: POST /particle/traduccion */
+	@PostMapping("/particle/traduccion")
+	ResponseEntity<TraduccionDTO> traduccionParticle(@RequestBody TraduccionRequestDTO req,
+			@AuthenticationPrincipal Usuario user) {
+		RespuestaIADTO respuesta = ExternalHTTPRequestHandler.traducir(req, ExternalHTTPRequestHandler.PARTICLE_URL,
+				ExternalHTTPRequestHandler.PARTICLE_MODEL, ExternalHTTPRequestHandler.getApiKeyParticle());
+		return new ResponseEntity<TraduccionDTO>(
+				guardarTraduccion(req, user, ExternalHTTPRequestHandler.PARTICLE_MODEL, respuesta),
+				HttpStatus.ACCEPTED);
+	}
+
 	/**
-	 * Usa las dos IA al mismo tiempo: las llamadas a Cohere y a Qwen se lanzan en
-	 * paralelo y se devuelven las dos traducciones. Si una falla, la otra se
+	 * Usa las tres IA al mismo tiempo: las llamadas a Cohere, Qwen y particle se lanzan en
+	 * paralelo y se devuelven las tres traducciones. Si una falla, las otras se
 	 * devuelve igual y la que falló trae el motivo del error. Ruta: POST
 	 * /ia/traduccion
 	 */
@@ -61,19 +72,24 @@ public class ApiController {
 	ResponseEntity<Map<String, Object>> traduccionAmbas(@RequestBody TraduccionRequestDTO req,
 			@AuthenticationPrincipal Usuario user) {
 
-		CompletableFuture<RespuestaIADTO> cohere = CompletableFuture.supplyAsync(
-				() -> ExternalHTTPRequestHandler.traducir(req, ExternalHTTPRequestHandler.COHERE_URL,
+		CompletableFuture<RespuestaIADTO> cohere = CompletableFuture
+				.supplyAsync(() -> ExternalHTTPRequestHandler.traducir(req, ExternalHTTPRequestHandler.COHERE_URL,
 						ExternalHTTPRequestHandler.MODEL, ExternalHTTPRequestHandler.getApiKey()));
-		CompletableFuture<RespuestaIADTO> qwen = CompletableFuture.supplyAsync(
-				() -> ExternalHTTPRequestHandler.traducir(req, ExternalHTTPRequestHandler.QWEN_URL,
+		CompletableFuture<RespuestaIADTO> qwen = CompletableFuture
+				.supplyAsync(() -> ExternalHTTPRequestHandler.traducir(req, ExternalHTTPRequestHandler.QWEN_URL,
 						ExternalHTTPRequestHandler.QWEN_MODEL, ExternalHTTPRequestHandler.getApiKeyQwen()));
+		CompletableFuture<RespuestaIADTO> particle = CompletableFuture
+				.supplyAsync(() -> ExternalHTTPRequestHandler.traducir(req, ExternalHTTPRequestHandler.PARTICLE_URL,
+						ExternalHTTPRequestHandler.PARTICLE_MODEL, ExternalHTTPRequestHandler.getApiKeyParticle()));
 
 		Map<String, Object> resultado = new LinkedHashMap<>();
 		resultado.put("cohere", resolver(cohere, req, user, ExternalHTTPRequestHandler.MODEL));
 		resultado.put("qwen", resolver(qwen, req, user, ExternalHTTPRequestHandler.QWEN_MODEL));
+		resultado.put("particle", resolver(particle, req, user, ExternalHTTPRequestHandler.PARTICLE_MODEL));
 
 		boolean alguna = resultado.values().stream().anyMatch(v -> v instanceof TraduccionDTO);
-		return new ResponseEntity<Map<String, Object>>(resultado, alguna ? HttpStatus.ACCEPTED : HttpStatus.BAD_GATEWAY);
+		return new ResponseEntity<Map<String, Object>>(resultado,
+				alguna ? HttpStatus.ACCEPTED : HttpStatus.BAD_GATEWAY);
 	}
 
 	/** Espera la respuesta de una IA y la guarda. si falló, devuelve el error. */
@@ -93,7 +109,10 @@ public class ApiController {
 		}
 	}
 
-	/** Guarda la traducción cifrada en el historial y devuelve el DTO con texto normal. */
+	/**
+	 * Guarda la traducción cifrada en el historial y devuelve el DTO con texto
+	 * normal.
+	 */
 	private TraduccionDTO guardarTraduccion(TraduccionRequestDTO req, Usuario user, String modelo,
 			RespuestaIADTO respuesta) {
 		boolean sinOrigen = req.getLenguajeOrigen() == null || req.getLenguajeOrigen().isBlank();
