@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @Transactional
-@Tag(name = "Api IA", description = "Endpoints para Cohere IA, Qwen IA y Particle IA")
+@Tag(name = "Api IA", description = "Endpoints para Cohere IA, Nemotron IA y Particle IA")
 public class ApiController {
 
 	@Autowired
@@ -41,14 +41,15 @@ public class ApiController {
 				guardarTraduccion(req, user, ExternalHTTPRequestHandler.MODEL, respuesta), HttpStatus.ACCEPTED);
 	}
 
-	/** Traducción solo con Qwen3 Coder. Ruta: POST /qwen/traduccion */
-	@PostMapping("/qwen/traduccion")
-	ResponseEntity<TraduccionDTO> traduccionQwen(@RequestBody TraduccionRequestDTO req,
+	/** Traducción solo con Nemotron. Ruta: POST /nemotron/traduccion */
+	@PostMapping("/nemotron/traduccion")
+	ResponseEntity<TraduccionDTO> traduccionNemotron(@RequestBody TraduccionRequestDTO req,
 			@AuthenticationPrincipal Usuario user) {
-		RespuestaIADTO respuesta = ExternalHTTPRequestHandler.traducir(req, ExternalHTTPRequestHandler.QWEN_URL,
-				ExternalHTTPRequestHandler.QWEN_MODEL, ExternalHTTPRequestHandler.getApiKeyQwen());
+		RespuestaIADTO respuesta = ExternalHTTPRequestHandler.traducir(req, ExternalHTTPRequestHandler.NEMOTRON_URL,
+				ExternalHTTPRequestHandler.NEMOTRON_MODEL, ExternalHTTPRequestHandler.getApiKey());
 		return new ResponseEntity<TraduccionDTO>(
-				guardarTraduccion(req, user, ExternalHTTPRequestHandler.QWEN_MODEL, respuesta), HttpStatus.ACCEPTED);
+				guardarTraduccion(req, user, ExternalHTTPRequestHandler.NEMOTRON_MODEL, respuesta),
+				HttpStatus.ACCEPTED);
 	}
 
 	/** Traducción solo con Particle-1 Coder. Ruta: POST /particle/traduccion */
@@ -63,9 +64,9 @@ public class ApiController {
 	}
 
 	/**
-	 * Usa las tres IA al mismo tiempo: las llamadas a Cohere, Qwen y particle se lanzan en
-	 * paralelo y se devuelven las tres traducciones. Si una falla, las otras se
-	 * devuelve igual y la que falló trae el motivo del error. Ruta: POST
+	 * Usa las tres IA al mismo tiempo: las llamadas a Cohere, Qwen y particle se
+	 * lanzan en paralelo y se devuelven las tres traducciones. Si una falla, las
+	 * otras se devuelve igual y la que falló trae el motivo del error. Ruta: POST
 	 * /ia/traduccion
 	 */
 	@PostMapping("/ia/traduccion")
@@ -76,15 +77,15 @@ public class ApiController {
 				.supplyAsync(() -> ExternalHTTPRequestHandler.traducir(req, ExternalHTTPRequestHandler.COHERE_URL,
 						ExternalHTTPRequestHandler.MODEL, ExternalHTTPRequestHandler.getApiKey()));
 		CompletableFuture<RespuestaIADTO> qwen = CompletableFuture
-				.supplyAsync(() -> ExternalHTTPRequestHandler.traducir(req, ExternalHTTPRequestHandler.QWEN_URL,
-						ExternalHTTPRequestHandler.QWEN_MODEL, ExternalHTTPRequestHandler.getApiKeyQwen()));
+				.supplyAsync(() -> ExternalHTTPRequestHandler.traducir(req, ExternalHTTPRequestHandler.NEMOTRON_URL,
+						ExternalHTTPRequestHandler.NEMOTRON_MODEL, ExternalHTTPRequestHandler.getApiKeyNemotron()));
 		CompletableFuture<RespuestaIADTO> particle = CompletableFuture
 				.supplyAsync(() -> ExternalHTTPRequestHandler.traducir(req, ExternalHTTPRequestHandler.PARTICLE_URL,
 						ExternalHTTPRequestHandler.PARTICLE_MODEL, ExternalHTTPRequestHandler.getApiKeyParticle()));
 
 		Map<String, Object> resultado = new LinkedHashMap<>();
 		resultado.put("cohere", resolver(cohere, req, user, ExternalHTTPRequestHandler.MODEL));
-		resultado.put("qwen", resolver(qwen, req, user, ExternalHTTPRequestHandler.QWEN_MODEL));
+		resultado.put("qwen", resolver(qwen, req, user, ExternalHTTPRequestHandler.NEMOTRON_MODEL));
 		resultado.put("particle", resolver(particle, req, user, ExternalHTTPRequestHandler.PARTICLE_MODEL));
 
 		boolean alguna = resultado.values().stream().anyMatch(v -> v instanceof TraduccionDTO);
