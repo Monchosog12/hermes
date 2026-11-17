@@ -1,4 +1,3 @@
-
 <section class="translator-page">
 
 
@@ -14,110 +13,105 @@
   </div>
 
   <div class="translator-card">
-  <div class="translator-toolbar">
+    <div class="translator-toolbar">
 
-    <div class="language-selector">
-      <label for="sourceLanguage">Lenguaje de origen</label>
+      <div class="language-selector">
+        <label for="sourceLanguage">Lenguaje de origen</label>
 
-      <select
-        id="sourceLanguage"
-        [value]="lenguajeOrigen"
-        (change)="lenguajeOrigen = $any($event.target).value">
+        <select id="sourceLanguage" [value]="lenguajeOrigen" (change)="lenguajeOrigen = $any($event.target).value">
 
-        <option value="JAVASCRIPT">JavaScript</option>
-        <option value="TYPESCRIPT">TypeScript</option>
-        <option value="JAVA">Java</option>
-        <option value="PYTHON">Python</option>
-        <option value="CPP">C++</option>
-        <option value="CSHARP">C#</option>
-      </select>
+          <option value="JAVASCRIPT">JavaScript</option>
+          <option value="TYPESCRIPT">TypeScript</option>
+          <option value="JAVA">Java</option>
+          <option value="PYTHON">Python</option>
+          <option value="CPP">C++</option>
+          <option value="CSHARP">C#</option>
+        </select>
+
+      </div>
+
+      <button type="button" class="swap-button" (click)="intercambiarLenguajes()" aria-label="Intercambiar lenguajes">
+        ⇄
+      </button>
+
+      <div class="language-selector">
+        <label for="targetLanguage">Lenguaje de destino</label>
+
+        <select id="targetLanguage" [value]="lenguajeDestino" (change)="lenguajeDestino = $any($event.target).value">
+          <option value="JAVASCRIPT">JavaScript</option>
+          <option value="TYPESCRIPT">TypeScript</option>
+          <option value="JAVA">Java</option>
+          <option value="PYTHON">Python</option>
+          <option value="CPP">C++</option>
+          <option value="CSHARP">C#</option>
+        </select>
+      </div>
 
     </div>
 
-    <button
-      type="button"
-      class="swap-button"
-      (click)="intercambiarLenguajes()"
-      aria-label="Intercambiar lenguajes">
-      ⇄
-    </button>
+    <div class="editor-grid">
 
-    <div class="language-selector">
-      <label for="targetLanguage">Lenguaje de destino</label>
+      <section class="editor-panel">
+        <div class="editor-header">
+          <span class="status-dot"></span>
+          <h2>Código original</h2>
+          <span class="language-badge">{{ lenguajeOrigen }}</span>
+        </div>
 
-      <select
-        id="targetLanguage"
-        [value]="lenguajeDestino"
-        (change)="lenguajeDestino = $any($event.target).value">
-        <option value="JAVASCRIPT">JavaScript</option>
-        <option value="TYPESCRIPT">TypeScript</option>
-        <option value="JAVA">Java</option>
-        <option value="PYTHON">Python</option>
-        <option value="CPP">C++</option>
-        <option value="CSHARP">C#</option>
-      </select>
+        <app-codeeditorcomponent [(value)]="codigoOrigen" [language]="lenguajeOrigen">
+        </app-codeeditorcomponent>
+      </section>
+
+      <section class="editor-panel">
+        <div class="editor-header">
+          <span class="status-dot result-dot"></span>
+          <h2>Resultado</h2>
+          <span class="language-badge">{{ lenguajeDestino }}</span>
+        </div>
+
+        <app-codeeditorcomponent [(value)]="codigoDestino" [language]="lenguajeDestino">
+        </app-codeeditorcomponent>
+      </section>
+
     </div>
-
-  </div>
-
-  <div class="editor-grid">
-
-    <section class="editor-panel">
-      <div class="editor-header">
+    <div class="model-picker">
+      <button type="button" class="btnModelo" (click)="seleccionarModelo($event)" aria-haspopup="listbox"
+        [attr.aria-expanded]="menuModelosAbierto">
         <span class="status-dot"></span>
-        <h2>Código original</h2>
-        <span class="language-badge">{{ lenguajeOrigen }}</span>
-      </div>
+        <span>Modelo: <strong>{{ modeloSeleccionado.nombre }}</strong></span>
+        <span class="chevron" [class.open]="menuModelosAbierto" aria-hidden="true">▾</span>
+      </button>
 
-      <app-codeeditorcomponent
-        [(value)]="codigoOrigen"
-        [language]="lenguajeOrigen">
-      </app-codeeditorcomponent>
-    </section>
+      @if (menuModelosAbierto) {
+      <ul class="model-list" role="listbox" (click)="$event.stopPropagation()">
+        @for (modelo of modelos; track modelo.endpoint) {
+        <li role="option" [attr.aria-selected]="modelo === modeloSeleccionado"
+          [class.selected]="modelo === modeloSeleccionado" (click)="elegirModelo(modelo)">
+          <span class="model-name">{{ modelo.nombre }}</span>
+          <span class="model-desc">{{ modelo.descripcion }}</span>
+        </li>
+        }
+      </ul>
+      }
+    </div>
+    <div class="translator-actions">
 
-    <section class="editor-panel">
-      <div class="editor-header">
-        <span class="status-dot result-dot"></span>
-        <h2>Resultado</h2>
-        <span class="language-badge">{{ lenguajeDestino }}</span>
-      </div>
+      <button type="button" class="secondary-button" (click)="limpiar()">
+        Limpiar
+      </button>
 
-      <app-codeeditorcomponent
-        [(value)]="codigoDestino"
-        [language]="lenguajeDestino">
-      </app-codeeditorcomponent>
-    </section>
+      <button type="button" class="secondary-button" (click)="copiarResultado()">
+        Copiar resultado
+      </button>
 
-  </div>
+      <button type="button" class="primary-button" [disabled]="cargando" (click)="traducir()">
+        {{ cargando ? 'Traduciendo…' : 'Traducir código' }}
+        <span aria-hidden="true">→</span>
+      </button>
 
-  <div class="translator-actions">
+    </div>
 
-    <button
-      type="button"
-      class="secondary-button"
-      (click)="limpiar()">
-      Limpiar
-    </button>
-
-    <button
-      type="button"
-      class="secondary-button"
-      (click)="copiarResultado()">
-      Copiar resultado
-    </button>
-
-    <button
-      type="button"
-      class="primary-button"
-      [disabled]="cargando"
-      (click)="traducir()">
-      {{ cargando ? 'Traduciendo…' : 'Traducir código' }}
-      <span aria-hidden="true">→</span>
-    </button>
-
-  </div>
-
-  @if (mejoras.length > 0) {
+    @if (mejoras.length > 0) {
     <section class="suggestions-panel" aria-labelledby="suggestionsTitle">
       <div class="editor-header">
         <span class="status-dot"></span>
@@ -125,15 +119,15 @@
       </div>
       <ul>
         @for (mejora of mejoras; track $index) {
-          <li>{{ mejora }}</li>
+        <li>{{ mejora }}</li>
         }
       </ul>
     </section>
-  }
+    }
 
-  <p class="translator-notice">
-    La traducción la realiza una IA y puede tardar unos segundos.
-    Revisa el resultado antes de usarlo.
-  </p>
-</div>
+    <p class="translator-notice">
+      La traducción la realiza una IA y puede tardar unos segundos.
+      Revisa el resultado antes de usarlo.
+    </p>
+  </div>
 </section>

@@ -38,27 +38,20 @@ public class ExternalHTTPRequestHandler {
 	public static final String COHERE_URL = "https://openrouter.ai/api/v1/chat/completions";
 
 	public static final String MODEL = "cohere/north-mini-code:free";
-	private static final String API_KEY = System.getenv("OPENROUTER_API_KEY_COHERE_MINI_CODE");
+	public static final String NEMOTRON_URL = COHERE_URL;
 
-	public static final String QWEN_MODEL = "qwen/qwen3-coder:free";
-	public static final String QWEN_URL = COHERE_URL;
-	private static final String API_KEY_QWEN = leerKeyQwen();
+	public static final String NEMOTRON_MODEL = "nvidia/nemotron-3-ultra-550b-a55b:free";
+	private static final String API_KEY_COHERE = System.getenv("OPENROUTER_API_KEY_COHERE_MINI_CODE");
+	private static final String API_KEY_NEMOTRON = System.getenv("OPENROUTER_API_KEY_NVIDIA_NEMOTRON");
 
-	public static final String PARTICLE_URL= COHERE_URL;
-	public static final String PARTICLE_MODEL ="particle-ai/particle-1:free";
-	private static final String API_KEY_PARTICLE = leerKeyParticle();
-
-	private static String leerKeyQwen() {
-		String k = System.getenv("OPENROUTER_API_KEY_QWEN");
-		return (k == null || k.isBlank()) ? API_KEY : k;
-	}
+	
 
 	public static String getApiKey() {
-		return API_KEY;
+		return API_KEY_COHERE;
 	}
 
-	public static String getApiKeyQwen() {
-		return API_KEY_QWEN;
+	public static String getApiKeyNemotron() {
+		return API_KEY_NEMOTRON;
 	}
 	
 	public static String leerKeyParticle() {
@@ -95,7 +88,7 @@ public class ExternalHTTPRequestHandler {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		System.out.println("//// POST COHERE ////");
-		if (API_KEY == null || API_KEY.isBlank()) {
+		if (API_KEY_COHERE == null || API_KEY_COHERE.isBlank()) {
 			System.out.println("Falta la variable de entorno OPENROUTER_API_KEY_COHERE_MINI_CODE");
 			return;
 		}
@@ -111,18 +104,18 @@ public class ExternalHTTPRequestHandler {
 			System.out.println("La API respondió con status code -> " + resp.getStatuscode());
 		}
 
-		System.out.println("//// POST QWEN ////");
-		if (API_KEY_QWEN == null || API_KEY_QWEN.isBlank()) {
-			System.out.println("Falta la variable de entorno OPENROUTER_API_KEY_QWEN");
+		System.out.println("//// POST NEMOTRON ////");
+		if (API_KEY_NEMOTRON == null || API_KEY_NEMOTRON.isBlank()) {
+			System.out.println("Falta la variable de entorno OPENROUTER_API_KEY_NEMOTRON");
 			return;
 		}
-		String jsonQwen = crearBodyTraduccion(req, QWEN_MODEL);
-		ChatResponseDTO respQwen = doPostAndConvertToDto(QWEN_URL, jsonQwen, API_KEY_QWEN);
-		System.out.println(respQwen.toString());
-		if (respQwen.getStatuscode() == 200 && respQwen.getPrimerContenido() != null) {
-			System.out.println(parsearRespuesta(respQwen.getPrimerContenido()));
+		String jsonNemotron = crearBodyTraduccion(req, NEMOTRON_MODEL);
+		ChatResponseDTO respNemotron = doPostAndConvertToDto(NEMOTRON_URL, jsonNemotron, API_KEY_NEMOTRON);
+		System.out.println(respNemotron.toString());
+		if (respNemotron.getStatuscode() == 200 && respNemotron.getPrimerContenido() != null) {
+			System.out.println(parsearRespuesta(respNemotron.getPrimerContenido()));
 		} else {
-			System.out.println("La API respondió con status code -> " + respQwen.getStatuscode());
+			System.out.println("La API respondió con status code -> " + respNemotron.getStatuscode());
 		}
 		System.out.println("//// POST PARTICLE ////");
 		if (API_KEY_PARTICLE == null || API_KEY_PARTICLE.isBlank()) {
@@ -141,7 +134,7 @@ public class ExternalHTTPRequestHandler {
 	}
 
 	public static ChatResponseDTO doPostAndConvertToDto(String url, String json) {
-		return doPostAndConvertToDto(url, json, API_KEY);
+		return doPostAndConvertToDto(url, json, API_KEY_COHERE);
 	}
 
 	public static ChatResponseDTO doPostAndConvertToDto(String url, String json, String apiKey) {
@@ -182,7 +175,7 @@ public class ExternalHTTPRequestHandler {
 	public static String doPostAndParse(String url, String json) {
 		HttpRequest request = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(json))
 				.uri(URI.create(url)).header("Content-Type", "application/json")
-				.setHeader("Authorization", "Bearer " + API_KEY).build();
+				.setHeader("Authorization", "Bearer " + API_KEY_COHERE).build();
 
 		HttpResponse<String> response = null;
 		try {
@@ -202,7 +195,7 @@ public class ExternalHTTPRequestHandler {
 
 	public static String doGetWithHeaders(String url) {
 		HttpRequest request = HttpRequest.newBuilder().GET().uri(URI.create(url))
-				.header("Content-Type", "application/json").setHeader("Authorization", "Bearer " + API_KEY).build();
+				.header("Content-Type", "application/json").setHeader("Authorization", "Bearer " + API_KEY_COHERE).build();
 
 		HttpResponse<String> response = null;
 		try {

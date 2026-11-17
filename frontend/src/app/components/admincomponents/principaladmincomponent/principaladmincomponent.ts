@@ -1,26 +1,5 @@
 import {Component} from '@angular/core';
-
-interface Estadistica {
-  titulo: string;
-  valor: number;
-  descripcion: string;
-  icono: string;
-  variacion?: string;
-  color: string;
-}
-
-interface Actividad {
-  titulo: string;
-  descripcion: string;
-  fecha: string;
-  icono: string;
-  tipo: string;
-}
-interface DatoGrafica {
-  periodo: string;
-  usuarios: number;
-  solicitudes: number;
-}
+import { Actividad, DatoGrafica, Estadistica } from '../../../models/admin/panel.models';
 
 @Component({
   selector: 'app-principaladmincomponent',

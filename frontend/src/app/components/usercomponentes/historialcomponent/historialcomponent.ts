@@ -1,17 +1,5 @@
 import {Component} from '@angular/core';
-
-type TipoOperacion = 'Traducción' | 'Mejora';
-type Lenguaje = 'Java' | 'JavaScript' | 'Python';
-
-interface ArchivoHistorial {
-  id: number;
-  nombre: string;
-  lenguaje: Lenguaje;
-  operacion: TipoOperacion;
-  fecha: string;
-  tamano: string;
-  extension: string;
-}
+import { ArchivoHistorial, Lenguaje } from '../../../models/history/archivohistorial.model';
 
 @Component({
   selector: 'app-historialcomponent',
