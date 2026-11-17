@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @Transactional
-@Tag(name = "Api IA", description = "Endpoints para Cohere IA y Qwen IA")
+@Tag(name = "Api IA", description = "Endpoints para Cohere IA, Qwen IA y Particle IA")
 public class ApiController {
 
 	@Autowired
@@ -43,6 +43,17 @@ public class ApiController {
 				ExternalHTTPRequestHandler.NEMOTRON_MODEL, ExternalHTTPRequestHandler.getApiKey());
 		return new ResponseEntity<TraduccionDTO>(
 				guardarTraduccion(req, user, ExternalHTTPRequestHandler.NEMOTRON_MODEL, respuesta),
+				HttpStatus.ACCEPTED);
+	}
+
+	/** Traducción solo con Particle-1 Coder. Ruta: POST /particle/traduccion */
+	@PostMapping("/particle/traduccion")
+	ResponseEntity<TraduccionDTO> traduccionParticle(@RequestBody TraduccionRequestDTO req,
+			@AuthenticationPrincipal Usuario user) {
+		RespuestaIADTO respuesta = ExternalHTTPRequestHandler.traducir(req, ExternalHTTPRequestHandler.PARTICLE_URL,
+				ExternalHTTPRequestHandler.PARTICLE_MODEL, ExternalHTTPRequestHandler.getApiKeyParticle());
+		return new ResponseEntity<TraduccionDTO>(
+				guardarTraduccion(req, user, ExternalHTTPRequestHandler.PARTICLE_MODEL, respuesta),
 				HttpStatus.ACCEPTED);
 	}
 

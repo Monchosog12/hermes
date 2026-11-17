@@ -53,6 +53,18 @@ public class ExternalHTTPRequestHandler {
 	public static String getApiKeyNemotron() {
 		return API_KEY_NEMOTRON;
 	}
+	
+	public static String leerKeyParticle() {
+		
+		String k = System.getenv("OPENROUTER_API_KEY_PARTICLE");
+		return (k == null || k.isBlank()) ? API_KEY: k;
+	}
+	
+
+	public static String getApiKeyParticle() {
+		return API_KEY_PARTICLE;
+	}
+
 
 	private static final String MAIN_PROMPT = """
 			Eres un ingeniero de software experto en múltiples lenguajes.
@@ -104,6 +116,19 @@ public class ExternalHTTPRequestHandler {
 			System.out.println(parsearRespuesta(respNemotron.getPrimerContenido()));
 		} else {
 			System.out.println("La API respondió con status code -> " + respNemotron.getStatuscode());
+		}
+		System.out.println("//// POST PARTICLE ////");
+		if (API_KEY_PARTICLE == null || API_KEY_PARTICLE.isBlank()) {
+			System.out.println("Falta la variable de entorno OPENROUTER_API_KEY_PARTICLE");
+			return;
+		}
+		String jsonParticle = crearBodyTraduccion(req, PARTICLE_MODEL);
+		ChatResponseDTO respParticle = doPostAndConvertToDto(PARTICLE_URL, jsonParticle, API_KEY_PARTICLE);
+		System.out.println(respParticle.toString());
+		if (respParticle.getStatuscode() == 200 && respParticle.getPrimerContenido() != null) {
+			System.out.println(parsearRespuesta(respParticle.getPrimerContenido()));
+		} else {
+			System.out.println("La API respondió con status code -> " + respParticle.getStatuscode());
 		}
 
 	}
