@@ -20,12 +20,33 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+/**
+ * Utilidad criptografica para el cifrado y el descifrdo simétrico de datos
+ * utilizados AES en modo GCM, asi como funciones de resumen criptografico como
+ * el hashing mediante algoritmos estandar como MD5,SHA
+ * 
+ * <p>
+ * Incluye soperte de IVs derivados dinamicamente mediante el HMAC_SHA254 o
+ * previstos de forma manual.
+ *</p>
+ */
 public class AESUtil {
 
+	/** Algoritmo de cifrado simétrico base. */
 	private final static String ALGORITMO = "AES";
 
+	/** Esquema y modo de cifrado utilizado (AES con GCM y sin relleno). */
 	private final static String TIPOCIFRADO = "AES/GCM/NoPadding";
 
+	/**
+	 * Cifra un texto utilizando AES/GCM con un Vector de Inicialización (IV) y
+	 * llave personalizados.
+	 * 
+	 * @param llave Llave simétrica en formato de cadena.
+	 * @param iv    Vector de inicialización en formato de cadena.
+	 * @param texto Texto plano que se desea cifrar.
+	 * @return Cadena resultante codificada en Base64 con el texto cifrado.
+	 */
 	public static String encrypt(String llave, String iv, String texto) {
 		Cipher cipher = null;
 		try {
@@ -52,6 +73,15 @@ public class AESUtil {
 		return new String(encodeBase64(encrypted));
 	}
 
+	/**
+	 * Descifra un texto previamente cifrado utilizando AES/GCM con llave e IV
+	 * personalizados.
+	 * 
+	 * @param llave     Llave simétrica en formato de cadena.
+	 * @param iv        Vector de inicialización en formato de cadena.
+	 * @param encrypted Texto cifrado codificado en Base64.
+	 * @return El texto plano descifrado, o una cadena vacía en caso de error.
+	 */
 	public static String decrypt(String llave, String iv, String encrypted) {
 		Cipher cipher = null;
 		try {
@@ -81,17 +111,20 @@ public class AESUtil {
 		return "";
 	}
 
-	/** Tamaño del IV recomendado para AES/GCM. */
+	/** Tamaño del IV recomendado para AES/GCM (12 bytes). */
 	private final static int LARGO_IV = 12;
 
 	/** Tamaño de la etiqueta de autenticación de GCM: 128 bits = 16 bytes. */
 	private final static int LARGO_TAG = 16;
 
 	/**
-	 * La llave se lee de la variable de entorno AES_KEY, nunca se escribe en el
-	 * código. Debe tener 16, 24 o 32 caracteres (AES-128, 192 o 256). Todos los que
-	 * usen la misma base de datos deben tener la misma llave, o no podrán leer lo
-	 * que guardaron los demás.
+	 * Lee y valida una variable de entorno que contiene la llave criptográfica.
+	 * 
+	 * @param nombre        Nombre de la variable de entorno.
+	 * @param largosValidos Longitudes válidas permitidas en bytes (ej. 16, 24, 32).
+	 * @return La llave en formato de cadena si es válida.
+	 * @throws IllegalStateException si la variable no existe, está vacía o su
+	 *                               longitud es incorrecta.
 	 */
 	private static String leerVariable(String nombre, int... largosValidos) {
 		String valor = System.getenv(nombre);
@@ -108,14 +141,18 @@ public class AESUtil {
 	}
 
 	/**
-	 * Cifra con AES/GCM usando la llave de AES_KEY. El IV no es fijo: se calcula
-	 * como los primeros 12 bytes de HMAC-SHA256(llave, texto) y se guarda delante
-	 * del cifrado. El resultado es Base64(iv + cifrado).
-	 *
-	 * - El mismo texto siempre produce el mismo resultado, así que se puede buscar
-	 *   por un campo cifrado (findByUsername(encrypt("admin"))).
-	 * - Textos distintos usan IVs distintos. Con un IV fijo, GCM deja ver el XOR
-	 *   de dos textos cifrados con la misma llave.
+	 * Cifra un texto plano con AES/GCM utilizando la llave obtenida de la variable
+	 * de entorno {@code AES_KEY}.
+	 * <p>
+	 * El IV no es fijo: se calcula como los primeros 12 bytes de HMAC-SHA256(llave,
+	 * texto) y se antepone al resultado. El formato de salida final es Base64(iv +
+	 * cifrado).
+	 * </p>
+	 * 
+	 * @param plainText Texto plano a cifrar.
+	 * @return Cadena en Base64 con el IV y el texto cifrado concatenados.
+	 * @throws IllegalStateException si ocurre un error durante el proceso de
+	 *                               cifrado o falta la llave.
 	 */
 	public static String encrypt(String plainText) {
 		String key = leerVariable("AES_KEY", 16, 24, 32);
@@ -138,10 +175,15 @@ public class AESUtil {
 	}
 
 	/**
-	 * Descifra lo que produjo {@link #encrypt(String)}: lee el IV de los primeros
-	 * 12 bytes y descifra el resto. Devuelve "" si el valor no es un texto cifrado
-	 * con la llave actual (por ejemplo, datos guardados en texto plano o con el
-	 * esquema anterior de IV fijo).
+	 * Descifra un texto generado previamente por {@link #encrypt(String)}.
+	 * <p>
+	 * Lee el IV de los primeros 12 bytes del arreglo decodificado y descifra el
+	 * resto. Devuelve una cadena vacía si el valor no es válido o no corresponde al
+	 * esquema actual.
+	 * </p>
+	 * 
+	 * @param encrypted Texto cifrado en formato Base64.
+	 * @return El texto plano original, o {@code ""} si el descifrado falla.
 	 */
 	public static String decrypt(String encrypted) {
 		String key = leerVariable("AES_KEY", 16, 24, 32);
@@ -162,33 +204,83 @@ public class AESUtil {
 		}
 	}
 
+	/**
+	 * Calcula el código de autenticación de mensajes basado en Hash (HMAC)
+	 * utilizando SHA-256.
+	 * 
+	 * @param key   Llave secreta para el cálculo de HMAC.
+	 * @param texto Arreglo de bytes sobre el cual se aplicará la función.
+	 * @return Arreglo de bytes resultante del hash HMAC-SHA256.
+	 * @throws GeneralSecurityException si el algoritmo no está disponible o falla
+	 *                                  la inicialización.
+	 */
 	private static byte[] hmacSha256(String key, byte[] texto) throws GeneralSecurityException {
 		Mac mac = Mac.getInstance("HmacSHA256");
 		mac.init(new SecretKeySpec(key.getBytes(), "HmacSHA256"));
 		return mac.doFinal(texto);
 	}
 
-
+	/**
+	 * Genera un resumen criptográfico (hash) del contenido utilizando el algoritmo
+	 * MD5.
+	 * 
+	 * @param content Contenido en texto plano a transformar.
+	 * @return Cadena hexadecimal con el hash MD5.
+	 */
 	public static String hashingToMD5(String content) {
 		return DigestUtils.md5Hex(content);
 	}
 
+	/**
+	 * Genera un resumen criptográfico (hash) del contenido utilizando el algoritmo
+	 * SHA-1.
+	 * 
+	 * @param content Contenido en texto plano a transformar.
+	 * @return Cadena hexadecimal con el hash SHA-1.
+	 */
 	public static String hashingToSHA1(String content) {
 		return DigestUtils.sha1Hex(content);
 	}
 
+	/**
+	 * Genera un resumen criptográfico (hash) del contenido utilizando el algoritmo
+	 * SHA-256.
+	 * 
+	 * @param content Contenido en texto plano a transformar.
+	 * @return Cadena hexadecimal con el hash SHA-256.
+	 */
 	public static String hashingToSHA256(String content) {
 		return DigestUtils.sha256Hex(content);
 	}
 
+	/**
+	 * Genera un resumen criptográfico (hash) del contenido utilizando el algoritmo
+	 * SHA-384.
+	 * 
+	 * @param content Contenido en texto plano a transformar.
+	 * @return Cadena hexadecimal con el hash SHA-384.
+	 */
 	public static String hashingToSHA384(String content) {
 		return DigestUtils.sha384Hex(content);
 	}
 
+	/**
+	 * Genera un resumen criptográfico (hash) del contenido utilizando el algoritmo
+	 * SHA-512.
+	 * 
+	 * @param content Contenido en texto plano a transformar.
+	 * @return Cadena hexadecimal con el hash SHA-512.
+	 */
 	public static String hashingToSHA512(String content) {
 		return DigestUtils.sha512Hex(content);
 	}
 
+	/**
+	 * Método principal de prueba y demostración de las funciones de cifrado,
+	 * descifrado y hashing.
+	 * 
+	 * @param args Argumentos de la línea de comandos.
+	 */
 	public static void main(String[] args) {
 		String text = "sapohijodeperra";
 		System.out.println(text);
@@ -205,6 +297,7 @@ public class AESUtil {
 		System.out.println(hashingToSHA256(contrasena));
 		System.out.println(hashingToSHA384(contrasena));
 		System.out.println(hashingToSHA512(contrasena));
-		
+
 	}
+
 }

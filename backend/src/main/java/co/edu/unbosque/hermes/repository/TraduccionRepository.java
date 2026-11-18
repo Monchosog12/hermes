@@ -12,8 +12,6 @@ import java.util.List;
  * consultas especializadas para recuperar el historial de traducciones realizadas por los usuarios.
  * </p>
  * 
- * @author Universidad El Bosque - Hermes
- * @version 1.0
  */
 public interface TraduccionRepository extends JpaRepository<Traduccion, Long>{
 

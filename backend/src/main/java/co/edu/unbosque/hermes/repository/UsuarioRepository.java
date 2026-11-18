@@ -13,9 +13,6 @@ import co.edu.unbosque.hermes.entity.Usuario.Rol;
  * Proporciona métodos CRUD estándar heredados de {@link JpaRepository}, así como consultas personalizadas 
  * para la búsqueda y eliminación de usuarios por su nombre de usuario o su rol asignado.
  * </p>
- * 
- * @author Universidad El Bosque - Hermes
- * @version 1.0
  */
 public interface UsuarioRepository extends JpaRepository<Usuario, Long>{
 
