@@ -4,15 +4,6 @@ import java.util.Objects;
 
 import co.edu.unbosque.hermes.entity.Usuario.Rol;
 
-/**
- * Representa el objeto de transferencia de datos para le gestion de ususuarios
- * en el sistema.
- *<p>
- * Contiene la informacón básica de autenticación y perfiles de usuario,
- * incluyendo su identificador único, correo electrónico, nombre de usuario,
- * contraseña y el rol asignado. 
- * </p>
- */
 public class UsuarioDTO {
 
 	private Long id;
@@ -21,19 +12,10 @@ public class UsuarioDTO {
 	private String password;
 	private Rol rol;
 
-
 	public UsuarioDTO() {
 		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * Constructor con los campos principales de registro (sin ID).
-	 * 
-	 * @param email    Correo electrónico del usuario.
-	 * @param username Nombre de usuario único para la autenticación.
-	 * @param password Contraseña de acceso del usuario.
-	 * @param rol      Rol o nivel de privilegios asignado (tipo {@link Rol}).
-	 */
 	public UsuarioDTO(String email, String username, String password, Rol rol) {
 		this.email = email;
 		this.username = username;
@@ -41,113 +23,51 @@ public class UsuarioDTO {
 		this.rol = rol;
 	}
 
-	/**
-	 * Obtiene el identificador único del usuario.
-	 * 
-	 * @return ID único de la entidad.
-	 */
 	public Long getId() {
 		return id;
 	}
 
-	/**
-	 * Establece el identificador único del usuario.
-	 * 
-	 * @param id ID a asignar.
-	 */
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-	/**
-	 * Obtiene el correo electrónico del usuario.
-	 * 
-	 * @return Cadena con el correo electrónico.
-	 */
 	public String getEmail() {
 		return email;
 	}
 
-	/**
-	 * Establece el correo electrónico del usuario.
-	 * 
-	 * @param email Correo electrónico a asignar.
-	 */
 	public void setEmail(String email) {
 		this.email = email;
 	}
 
-	/**
-	 * Obtiene el nombre de usuario.
-	 * 
-	 * @return Cadena con el nombre de usuario.
-	 */
 	public String getUsername() {
 		return username;
 	}
 
-	/**
-	 * Establece el nombre de usuario.
-	 * 
-	 * @param username Nombre de usuario a asignar.
-	 */
 	public void setUsername(String username) {
 		this.username = username;
 	}
 
-	/**
-	 * Obtiene la contraseña del usuario.
-	 * 
-	 * @return Cadena con la contraseña.
-	 */
 	public String getPassword() {
 		return password;
 	}
 
-	/**
-	 * Establece la contraseña del usuario.
-	 * 
-	 * @param password Contraseña a asignar.
-	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
-	/**
-	 * Obtiene el rol asignado al usuario.
-	 * 
-	 * @return Objeto {@link Rol} con los permisos del usuario.
-	 */
 	public Rol getRol() {
 		return rol;
 	}
 
-	/**
-	 * Establece el rol asignado al usuario.
-	 * 
-	 * @param rol Rol a asignar.
-	 */
 	public void setRol(Rol rol) {
 		this.rol = rol;
 	}
 
-	/**
-	 * Calcula el código hash basado en los atributos del objeto.
-	 * 
-	 * @return Valor entero del hash.
-	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(email, id, password, rol, username);
 	}
 
-	/**
-	 * Compara la igualdad de este objeto con otro pasado por parámetro.
-	 * 
-	 * @param obj Objeto a comparar.
-	 * @return {@code true} si los objetos coinciden en todos sus atributos;
-	 *         {@code false} en caso contrario.
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -162,14 +82,10 @@ public class UsuarioDTO {
 				&& Objects.equals(username, other.username);
 	}
 
-	/**
-	 * Retorna una representación en cadena del objeto UsuarioDTO.
-	 * 
-	 * @return Cadena con los valores actuales de los atributos.
-	 */
 	@Override
 	public String toString() {
 		return "UsuarioDTO [id=" + id + ", email=" + email + ", username=" + username + ", password=" + password
 				+ ", rol=" + rol + "]";
 	}
+
 }
