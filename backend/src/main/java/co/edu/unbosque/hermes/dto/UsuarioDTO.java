@@ -20,6 +20,7 @@ public class UsuarioDTO {
 	private String username;
 	private String password;
 	private Rol rol;
+	private boolean cuentaNoExpirada;
 
 
 	public UsuarioDTO() {
@@ -34,11 +35,12 @@ public class UsuarioDTO {
 	 * @param password Contraseña de acceso del usuario.
 	 * @param rol      Rol o nivel de privilegios asignado (tipo {@link Rol}).
 	 */
-	public UsuarioDTO(String email, String username, String password, Rol rol) {
+	public UsuarioDTO(String email, String username, String password, Rol rol, boolean cuentaNoExpirada ) {
 		this.email = email;
 		this.username = username;
 		this.password = password;
 		this.rol = rol;
+		this.cuentaNoExpirada = cuentaNoExpirada;
 	}
 
 	/**
@@ -48,6 +50,14 @@ public class UsuarioDTO {
 	 */
 	public Long getId() {
 		return id;
+	}
+
+	public boolean isCuentaNoExpirada() {
+		return cuentaNoExpirada;
+	}
+
+	public void setCuentaNoExpirada(boolean cuentaNoExpirada) {
+		this.cuentaNoExpirada = cuentaNoExpirada;
 	}
 
 	/**
@@ -131,23 +141,11 @@ public class UsuarioDTO {
 		this.rol = rol;
 	}
 
-	/**
-	 * Calcula el código hash basado en los atributos del objeto.
-	 * 
-	 * @return Valor entero del hash.
-	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(email, id, password, rol, username);
+		return Objects.hash(Boolean.valueOf(cuentaNoExpirada), email, id, password, rol, username);
 	}
 
-	/**
-	 * Compara la igualdad de este objeto con otro pasado por parámetro.
-	 * 
-	 * @param obj Objeto a comparar.
-	 * @return {@code true} si los objetos coinciden en todos sus atributos;
-	 *         {@code false} en caso contrario.
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -157,19 +155,14 @@ public class UsuarioDTO {
 		if (getClass() != obj.getClass())
 			return false;
 		UsuarioDTO other = (UsuarioDTO) obj;
-		return Objects.equals(email, other.email) && Objects.equals(id, other.id)
-				&& Objects.equals(password, other.password) && rol == other.rol
+		return cuentaNoExpirada == other.cuentaNoExpirada && Objects.equals(email, other.email)
+				&& Objects.equals(id, other.id) && Objects.equals(password, other.password) && rol == other.rol
 				&& Objects.equals(username, other.username);
 	}
 
-	/**
-	 * Retorna una representación en cadena del objeto UsuarioDTO.
-	 * 
-	 * @return Cadena con los valores actuales de los atributos.
-	 */
 	@Override
 	public String toString() {
 		return "UsuarioDTO [id=" + id + ", email=" + email + ", username=" + username + ", password=" + password
-				+ ", rol=" + rol + "]";
+				+ ", rol=" + rol + ", cuentaNoExpirada=" + cuentaNoExpirada + "]";
 	}
 }
