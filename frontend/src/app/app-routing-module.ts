@@ -9,6 +9,7 @@ import {
   Solicitudesadmincomponent
 } from './components/admincomponents/solicitudesadmincomponent/solicitudesadmincomponent';
 import {Reportesadmincomponent} from './components/admincomponents/reportesadmincomponent/reportesadmincomponent';
+import {adminGuard} from './guards/admin.guard';
 
 const routes: Routes = [
   {
@@ -22,6 +23,7 @@ const routes: Routes = [
 
   {
     path: 'admin',
+    canActivate: [adminGuard],
     children: [{path: '', redirectTo: 'principaladmin', pathMatch: 'full'},
       {path: 'principaladmin', component: Principaladmincomponent},
       {path: 'usuarios', component: Usuariosadmincomponent},

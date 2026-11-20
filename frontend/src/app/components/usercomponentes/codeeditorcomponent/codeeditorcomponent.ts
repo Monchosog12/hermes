@@ -16,19 +16,12 @@ import type { Compartment, Extension } from '@codemirror/state';
 import type { EditorView } from '@codemirror/view';
 import { LanguageCode } from '../../../models/ai/ai.models';
 import { LoadedSource } from '../../../models/files/files.models';
+import { CodeMirrorKit } from '../../../models/editor/codemirror.models';
 import { LanguageService } from '../../../services/languages/language.service';
 import { SourceFileService } from '../../../services/files/source-file.service';
 
 
 const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace";
-
-interface CodeMirrorKit {
-  EditorView: typeof import('codemirror').EditorView;
-  basicSetup: typeof import('codemirror').basicSetup;
-  EditorState: typeof import('@codemirror/state').EditorState;
-  languageSlot: Compartment;
-  editableSlot: Compartment;
-}
 
 
 @Component({

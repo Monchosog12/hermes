@@ -1,11 +1,6 @@
 import { Component } from '@angular/core';
-interface Usuario {
-  id: number;
-  nombre: string;
-  correo: string;
-  fechaRegistro: string;
-  estado: 'Activo' | 'Inactivo';
-}
+import { Usuario } from '../../../models/admin/usuario.model';
+
 @Component({
   selector: 'app-usuariosadmincomponent',
   standalone: false,
