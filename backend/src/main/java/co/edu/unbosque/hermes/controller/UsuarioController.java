@@ -22,6 +22,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+/**
+ * Controlador REST encargado de gestionar las operaciones CRUD y de
+ * administración para los usuarios .
+ */
 @RestController
 @RequestMapping("/user")
 @CrossOrigin(origins = { "http://localhost:4200", "http://localhost:4201" })
@@ -30,9 +34,23 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @SecurityRequirement(name = "bearerAuth")
 public class UsuarioController {
 
+	/**
+	 * Servicio para manejar la logica de negocio relacionado con los usuarios.
+	 */
+
 	@Autowired
 	private UsuarioService usuarioService;
 
+	/**
+	 * Crea un nuevo usuario en el sistema a partir de un objeto JSON recibido en el
+	 * cuerpo de la petición.
+	 * 
+	 * @param newUser Objeto {@link UsuarioDTO} con la información del usuario a
+	 *                registrar.
+	 * @return ResponseEntity con un mensaje indicando el resultado de la operación
+	 *         y su código HTTP.
+	 * 
+	 */
 	@PostMapping("/createjson")
 	ResponseEntity<String> createNewUser(
 			@Parameter(description = "Datos del nuevo usuario", required = true, schema = @Schema(implementation = UsuarioDTO.class), examples = @ExampleObject(value = """
@@ -56,32 +74,48 @@ public class UsuarioController {
 		}
 	}
 	
+	/**
+	 * Actualiza la información de un usuario existente buscando por su identificador único.
+	 * 
+	 * @param id      Identificador único del usuario a actualizar.
+	 * @param newUser Objeto {@link UsuarioDTO} que contiene los nuevos datos a modificar.
+	 * @return ResponseEntity indicando si la actualización fue exitosa o si ocurrió un error.
+	 */
+
 	@PostMapping("/updateuser")
-	ResponseEntity<String> updateUser(@RequestBody Long id, @RequestBody UsuarioDTO newUser){
+	ResponseEntity<String> updateUser(@RequestBody Long id, @RequestBody UsuarioDTO newUser) {
 		int status = usuarioService.actualizarPorId(id, newUser);
-		if(status == 0) {
+		if (status == 0) {
 			return new ResponseEntity<String>("Usuario actualizado correctamente", HttpStatus.ACCEPTED);
-		}else {
-			return new ResponseEntity<String>("Error al actualizar usuario, posiblemente el nombre de usuario ya esta en uso", HttpStatus.BAD_REQUEST);
+		} else {
+			return new ResponseEntity<String>(
+					"Error al actualizar usuario, posiblemente el nombre de usuario ya esta en uso",
+					HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+	/**
+	 * Elimina un usuario del sistema basándose en su identificador único.
+	 * 
+	 * @param id Identificador único del usuario que se desea eliminar.
+	 * @return ResponseEntity con el estado de la eliminación.
+	 */
+
 	@DeleteMapping("/deletebyid")
-	ResponseEntity<String> deleteById(@RequestBody Long id){
+	ResponseEntity<String> deleteById(@RequestBody Long id) {
 		int status = usuarioService.eliminarPorId(id);
-		if(status == 0) {
+		if (status == 0) {
 			return new ResponseEntity<String>("Usuario eliminado correctamente", HttpStatus.ACCEPTED);
-		}else {
+		} else {
 			return new ResponseEntity<String>("Error al eliminar el usuario", HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
 	@GetMapping("/getall")
-	ResponseEntity<List<UsuarioDTO>>getAll(){
-		List<UsuarioDTO>users = usuarioService.getAll();
-		if(users.isEmpty()) {
+	ResponseEntity<List<UsuarioDTO>> getAll() {
+		List<UsuarioDTO> users = usuarioService.getAll();
+		if (users.isEmpty()) {
 			return new ResponseEntity<>(users, HttpStatus.NO_CONTENT);
-		}else {
+		} else {
 			return new ResponseEntity<>(users, HttpStatus.ACCEPTED);
 		}
 	}
