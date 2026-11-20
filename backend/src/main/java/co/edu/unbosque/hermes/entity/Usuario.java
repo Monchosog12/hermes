@@ -20,8 +20,8 @@ import jakarta.persistence.Table;
 /**
  * Representa la entidad de Usuario dentro del sistema Hermes.
  * <p>
- * Implementa la interfaz {@link UserDetails} de Spring Security para gestionar 
- * la autenticación, autorización, roles y el estado de las cuentas de usuario 
+ * Implementa la interfaz {@link UserDetails} de Spring Security para gestionar
+ * la autenticación, autorización, roles y el estado de las cuentas de usuario
  * en la base de datos.
  * </p>
  */
@@ -31,24 +31,24 @@ public class Usuario implements UserDetails {
 
 	/** Identificador único para la serialización de la clase. */
 	private static final long serialVersionUID = 1L;
-	
-	@Id 
-	@GeneratedValue(strategy = GenerationType.IDENTITY) 
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
+
 	@Column(unique = true, nullable = false)
 	private String email;
-	
+
 	@Column(nullable = false)
 	private String username;
-	
+
 	@Column(nullable = false)
 	private String password;
-	
+
 	@Enumerated(EnumType.STRING)
 	private Rol rol;
-	
-	private boolean cuentaNoExpirada;
+
+	private boolean cuentaNoExpirada = true;
 
 	/**
 	 * Constructor vacio por defecto para la entidad Usuario.
@@ -58,18 +58,20 @@ public class Usuario implements UserDetails {
 	}
 
 	/**
-	 * Constructor con parámetros para inicializar un nuevo usuario con información básica.
+	 * Constructor con parámetros para inicializar un nuevo usuario con información
+	 * básica.
 	 * 
-	 * @param email Correo electrónico único del usuario.
+	 * @param email    Correo electrónico único del usuario.
 	 * @param username Nombre de usuario para el sistema.
 	 * @param password Contraseña de acceso (generalmente cifrada).
-	 * @param rol Rol asignado dentro del sistema ({@link Rol}).
+	 * @param rol      Rol asignado dentro del sistema ({@link Rol}).
 	 */
 	public Usuario(String email, String username, String password, Rol rol) {
 		this.email = email;
 		this.username = username;
 		this.password = password;
 		this.rol = rol;
+		this.cuentaNoExpirada = true;
 	}
 
 	/**
@@ -185,7 +187,7 @@ public class Usuario implements UserDetails {
 	 */
 	public enum Rol {
 		/** Rol con privilegios de administración en la plataforma. */
-		ADMIN, 
+		ADMIN,
 		/** Rol estándar para usuarios comunes del sistema. */
 		USER
 	}
@@ -216,9 +218,11 @@ public class Usuario implements UserDetails {
 	}
 
 	/**
-	 * Retorna las autoridades (roles y permisos) concedidas al usuario para Spring Security.
+	 * Retorna las autoridades (roles y permisos) concedidas al usuario para Spring
+	 * Security.
 	 * 
-	 * @return Colección de objetos {@link GrantedAuthority} basados en el rol asignado.
+	 * @return Colección de objetos {@link GrantedAuthority} basados en el rol
+	 *         asignado.
 	 */
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
