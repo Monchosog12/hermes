@@ -68,7 +68,7 @@ public class SecurityConfig {
 						.requestMatchers("/auth/**").permitAll()
 						.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 						.requestMatchers("/user/**").hasRole("ADMIN")
-						.requestMatchers("/gemma/**", "/qwen/**", "/bettercode").hasRole("USER")
+						.requestMatchers("/cohere/**", "/nemotron/**", "/particle/**").hasAnyRole("USER", "ADMIN")
 						.anyRequest().authenticated())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authenticationProvider(authenticationProvider())

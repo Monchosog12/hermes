@@ -27,6 +27,21 @@ export class TraduccionService {
     );
   }
 
+  /**
+   * Envía el código traducido por correo usando POST /correo/enviar.
+   * El backend toma el destinatario del usuario autenticado (correo de registro).
+   */
+  enviarCorreo(codigo: string) {
+    return this.cliente.post(
+      `${this.urlbase}/correo/enviar`,
+      {
+        asunto: 'Tu código traducido - Hermes',
+        mensaje: codigo,
+      },
+      { headers: this.obtenerHeaders(), responseType: 'text' }
+    );
+  }
+
   traducirCohere(datos: TraduccionModel) {
     return this.cliente.post<AnswertraduccionModel>(
       `${this.urlbase}/cohere/traduccion`,

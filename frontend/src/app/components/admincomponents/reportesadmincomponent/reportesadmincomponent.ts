@@ -144,4 +144,5 @@ export class Reportesadmincomponent { // Datos ficticios de usuarios
     enlace.click();
 
     URL.revokeObjectURL(url);
-  }}
+  }
+}
