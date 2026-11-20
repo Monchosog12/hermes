@@ -25,7 +25,7 @@
         <i class="fa-solid fa-users"></i>
       </div>
       <div>
-        <h2>{{ usuarios.length }}</h2>
+        <h2>{{ usuarios().length }}</h2>
         <p>Usuarios registrados</p>
       </div>
     </article>
@@ -107,33 +107,32 @@
 
         <tbody>
 
-        <tr *ngFor="let usuario of usuariosFiltrados">
+        <tr *ngFor="let user of usuariosFiltrados">
 
           <td>
             <div class="user-information">
+
               <div class="user-avatar">
-                {{ usuario.nombre.charAt(0) }}
+                {{ user.username.charAt(0).toUpperCase() }}
               </div>
 
               <div>
-                <h3>{{ usuario.nombre }}</h3>
-                <p>{{ usuario.correo }}</p>
+                <h3>{{ user.username }}</h3>
+                <p>{{ user.email }}</p>
               </div>
+
             </div>
           </td>
 
-          <td class="registration-date">
-            {{ usuario.fechaRegistro }}
-          </td>
-
           <td>
-              <span
-                class="user-status"
-                [ngClass]="usuario.estado === 'Activo' ? 'active' : 'inactive'"
-              >
-                <span class="status-dot"></span>
-                {{ usuario.estado }}
-              </span>
+      <span
+        class="user-status"
+        [ngClass]="user.cuentaNoExpirada ? 'active' : 'inactive'"
+      >
+        <span class="status-dot"></span>
+
+        {{ user.cuentaNoExpirada ? 'Activo' : 'Inactivo' }}
+      </span>
           </td>
 
           <td>
@@ -146,7 +145,7 @@
         </tr>
 
         <tr *ngIf="usuariosFiltrados.length === 0">
-          <td colspan="4" class="empty-state">
+          <td colspan="3" class="empty-state">
             <i class="fa-solid fa-user-slash"></i>
             <h3>No se encontraron usuarios</h3>
             <p>Prueba con otro nombre, correo o estado.</p>
