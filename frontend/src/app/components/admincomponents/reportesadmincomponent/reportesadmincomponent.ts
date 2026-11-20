@@ -1,24 +1,6 @@
 import { Component } from '@angular/core';
-interface ReporteUsuario {
-  id: number;
-  nombre: string;
-  correo: string;
-  fechaRegistro: string;
-  estado: 'Activo' | 'Inactivo';
-}
+import { EstadisticaMensual, ReporteSolicitud, ReporteUsuario } from '../../../models/admin/reportes.models';
 
-interface ReporteSolicitud {
-  id: number;
-  usuario: string;
-  tipo: string;
-  fecha: string;
-  estado: 'Pendiente' | 'En proceso' | 'Atendida';
-}
-
-interface EstadisticaMensual {
-  mes: string;
-  cantidad: number;
-}
 @Component({
   selector: 'app-reportesadmincomponent',
   standalone: false,

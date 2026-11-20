@@ -11,12 +11,7 @@ import {
   UserSummary,
   ROLE_LABELS,
 } from '../../models/auth/auth.models';
-
-interface Session {
-  accessToken: string;
-  expiresAt: number; // epoch ms
-  user: UserSummary;
-}
+import { Session } from '../../models/auth/session.model';
 
 const STORAGE_KEY = 'codeforge.session';
 

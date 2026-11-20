@@ -8,8 +8,7 @@ import { Traductorcomponent } from './components/usercomponentes/traductorcompon
 import { Codeeditorcomponent } from './components/usercomponentes/codeeditorcomponent/codeeditorcomponent';
 import { Mejoracodigocomponent } from './components/usercomponentes/mejoracodigocomponent/mejoracodigocomponent';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { tokenInterceptor } from './interceptors/token.interceptor';
+import { provideHttpClient } from '@angular/common/http';
 import { Principaladmincomponent } from './components/admincomponents/principaladmincomponent/principaladmincomponent';
 import { Historialcomponent } from './components/usercomponentes/historialcomponent/historialcomponent';
 import { Headeradmincomponent } from './components/admincomponents/headeradmincomponent/headeradmincomponent';
@@ -33,7 +32,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     Reportesadmincomponent,
   ],
   imports: [BrowserModule, AppRoutingModule, FormsModule, MatSnackBarModule, ReactiveFormsModule],
-  providers: [provideBrowserGlobalErrorListeners(), provideHttpClient(withInterceptors([tokenInterceptor]))],
+  providers: [provideBrowserGlobalErrorListeners(), provideHttpClient()],
   bootstrap: [App],
 })
 export class AppModule {}

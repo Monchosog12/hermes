@@ -308,3 +308,92 @@
   color: transparent;
   font-weight: bold;
 }
+
+/* Selector de modelo de IA */
+
+.model-picker {
+  position: relative;
+  display: inline-block;
+  margin-top: 22px;
+}
+
+.btnModelo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 14px;
+  color: #c4c5d5;
+  background: #191a23;
+  border: 1px solid #30313f;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.btnModelo:hover,
+.btnModelo[aria-expanded="true"] {
+  background: #22232f;
+  border-color: #8b78fa;
+}
+
+.btnModelo strong {
+  color: #e8e9f2;
+  font-weight: 600;
+}
+
+.chevron {
+  color: #b8a6ff;
+  transition: transform 0.2s;
+}
+
+.chevron.open {
+  transform: rotate(180deg);
+}
+
+.model-list {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 20;
+  min-width: 100%;
+  width: max-content;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: #191a23;
+  border: 1px solid #30313f;
+  border-radius: 10px;
+  box-shadow: 0 14px 40px rgb(0 0 0 / 35%);
+}
+
+.model-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.model-list li:hover {
+  background: #22232f;
+}
+
+.model-list li.selected {
+  background: #262039;
+}
+
+.model-name {
+  color: #e8e9f2;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.model-desc {
+  color: #85879b;
+  font-size: 11px;
+}

@@ -51,6 +51,8 @@ public class ExternalHTTPRequestHandler {
 
 	/** URL base de la API de OpenRouter para la finalización de chats. */
 	public static final String COHERE_URL = "https://openrouter.ai/api/v1/chat/completions";
+	public static final String NEMOTRON_URL = COHERE_URL;
+	public static final String PARTICLE_URL = COHERE_URL;
 
 	/** URL para el modelo Nemotron (apunta al endpoint general de OpenRouter). */
 	public static final String NEMOTRON_URL = COHERE_URL;
@@ -286,8 +288,7 @@ public class ExternalHTTPRequestHandler {
 	 */
 	public static String doGetWithHeaders(String url) {
 		HttpRequest request = HttpRequest.newBuilder().GET().uri(URI.create(url))
-				.header("Content-Type", "application/json").setHeader("Authorization", "Bearer " + API_KEY_COHERE)
-				.build();
+				.header("Content-Type", "application/json").setHeader("Authorization", "Bearer " + API_KEY_COHERE).build();
 
 		HttpResponse<String> response = null;
 		try {
