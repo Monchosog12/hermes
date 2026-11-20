@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal} from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import {User} from '../../../models/usuarios.model';
 import { UsuarioService } from '../../../services/usuario.service';
 
@@ -17,6 +17,15 @@ export class Usuariosadmincomponent implements OnInit {
 
   // 2. Convierte usuarios en un signal
   usuarios = signal<User[]>([]);
+  totalUsuarios = computed(() => this.usuarios().length);
+
+  totalActivos = computed(() =>
+    this.usuarios().filter((user) => user.cuentaNoExpirada).length
+  );
+
+  totalInactivos = computed(() =>
+    this.usuarios().filter((user) => !user.cuentaNoExpirada).length
+  );
 
   ngOnInit(): void {
     this.cargarUsuarios();
@@ -51,11 +60,5 @@ export class Usuariosadmincomponent implements OnInit {
     });
   }
 
-  get totalActivos(): number {
-    return this.usuarios().filter((user) => user.cuentaNoExpirada).length;
-  }
 
-  get totalInactivos(): number {
-    return this.usuarios().filter((user) => !user.cuentaNoExpirada).length;
-  }
 }
