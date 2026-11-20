@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @Transactional
-@Tag(name = "Api IA", description = "Endpoints para Cohere IA, Qwen IA y Particle IA")
+@Tag(name = "Api IA", description = "Endpoints para Cohere IA, Nemotron IA y Particle IA")
 public class ApiController {
 
 	@Autowired
