@@ -20,6 +20,7 @@ declare const bootstrap: any;
 })
 export class Traductorcomponent {
 
+
   private readonly servicio = inject(TraduccionService);
   private readonly loginServicio = inject(LoginService);
   private readonly snackBar = inject(MatSnackBar);
@@ -157,5 +158,39 @@ export class Traductorcomponent {
       default:
         return 'No fue posible traducir el código. Intenta de nuevo.';
     }
+  }
+
+  enviarCorreo(): void {
+    if (!this.codigoDestino.trim()) {
+      this.mostrarMensaje('Primero traduce un código para poder enviarlo.', 'error');
+      return;
+    }
+
+    if (!this.loginServicio.estaLogueado()) {
+      this.mostrarMensaje('Inicia sesión para enviar el correo.', 'error');
+      this.abrirModalLogin();
+      return;
+    }
+
+    this.servicio.enviarCorreo(this.codigoDestino).subscribe({
+      next: () => {
+        this.mostrarMensaje('Correo enviado exitosamente.', 'exito');
+      },
+      error: (error: HttpErrorResponse) => {
+        this.mostrarMensaje(this.obtenerMensajeErrorCorreo(error), 'error');
+      }
+    });
+  }
+
+  /** Mensajes de error del envío de correo (no reutiliza los de traducción). */
+  private obtenerMensajeErrorCorreo(error: HttpErrorResponse): string {
+    if (error.status === 0 || error.status === 401 || error.status === 403) {
+      return this.obtenerMensajeError(error);
+    }
+    // El backend responde con texto plano explicando el motivo (ej. "Error al enviar el correo: ...").
+    if (typeof error.error === 'string' && error.error.trim()) {
+      return error.error;
+    }
+    return 'No fue posible enviar el correo. Intenta de nuevo.';
   }
 }
