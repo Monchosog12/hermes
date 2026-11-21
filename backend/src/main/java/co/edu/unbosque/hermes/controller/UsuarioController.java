@@ -5,16 +5,19 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.edu.unbosque.hermes.dto.UsuarioDTO;
+import co.edu.unbosque.hermes.entity.Usuario;
 import co.edu.unbosque.hermes.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -76,37 +79,55 @@ public class UsuarioController {
 	
 	/**
 	 * Actualiza la información de un usuario existente buscando por su identificador único.
-	 * 
+	 * Ruta: POST /user/updateuser/{id}
+	 *
 	 * @param id      Identificador único del usuario a actualizar.
-	 * @param newUser Objeto {@link UsuarioDTO} que contiene los nuevos datos a modificar.
+	 * @param newUser Objeto {@link UsuarioDTO} con los nuevos datos. La contraseña es
+	 *                opcional: si viene vacía se conserva la actual.
 	 * @return ResponseEntity indicando si la actualización fue exitosa o si ocurrió un error.
 	 */
+	@PostMapping("/updateuser/{id}")
+	ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody UsuarioDTO newUser) {
+		if (newUser.getUsername() == null || newUser.getUsername().isBlank() || newUser.getEmail() == null
+				|| newUser.getEmail().isBlank()) {
+			return new ResponseEntity<String>("El nombre de usuario y el correo son obligatorios",
+					HttpStatus.BAD_REQUEST);
+		}
+		if (newUser.getUsername().contains("<") || newUser.getUsername().contains(">")) {
+			return new ResponseEntity<String>("Solicitud con caracteres invalidos", HttpStatus.BAD_REQUEST);
+		}
+		newUser.setUsername(newUser.getUsername().trim());
+		newUser.setEmail(newUser.getEmail().trim());
 
-	@PostMapping("/updateuser")
-	ResponseEntity<String> updateUser(@RequestBody Long id, @RequestBody UsuarioDTO newUser) {
 		int status = usuarioService.actualizarPorId(id, newUser);
 		if (status == 0) {
 			return new ResponseEntity<String>("Usuario actualizado correctamente", HttpStatus.ACCEPTED);
+		} else if (status == 1) {
+			return new ResponseEntity<String>("El usuario no existe", HttpStatus.NOT_FOUND);
 		} else {
-			return new ResponseEntity<String>(
-					"Error al actualizar usuario, posiblemente el nombre de usuario ya esta en uso",
-					HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>("El nombre de usuario ya está en uso por otra cuenta",
+					HttpStatus.CONFLICT);
 		}
 	}
+
 	/**
-	 * Elimina un usuario del sistema basándose en su identificador único.
-	 * 
-	 * @param id Identificador único del usuario que se desea eliminar.
+	 * Elimina un usuario del sistema basándose en su identificador único, junto con
+	 * su historial de traducciones. Ruta: DELETE /user/deletebyid/{id}
+	 *
+	 * @param id         Identificador único del usuario que se desea eliminar.
+	 * @param autenticado Administrador que realiza la petición (no puede eliminarse a sí mismo).
 	 * @return ResponseEntity con el estado de la eliminación.
 	 */
-
-	@DeleteMapping("/deletebyid")
-	ResponseEntity<String> deleteById(@RequestBody Long id) {
+	@DeleteMapping("/deletebyid/{id}")
+	ResponseEntity<String> deleteById(@PathVariable Long id, @AuthenticationPrincipal Usuario autenticado) {
+		if (autenticado != null && id.equals(autenticado.getId())) {
+			return new ResponseEntity<String>("No puedes eliminar tu propia cuenta", HttpStatus.BAD_REQUEST);
+		}
 		int status = usuarioService.eliminarPorId(id);
 		if (status == 0) {
 			return new ResponseEntity<String>("Usuario eliminado correctamente", HttpStatus.ACCEPTED);
 		} else {
-			return new ResponseEntity<String>("Error al eliminar el usuario", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>("El usuario no existe", HttpStatus.NOT_FOUND);
 		}
 	}
 

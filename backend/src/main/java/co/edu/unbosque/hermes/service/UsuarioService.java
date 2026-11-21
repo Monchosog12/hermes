@@ -8,9 +8,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.unbosque.hermes.dto.UsuarioDTO;
 import co.edu.unbosque.hermes.entity.Usuario;
+import co.edu.unbosque.hermes.repository.TraduccionRepository;
 import co.edu.unbosque.hermes.repository.UsuarioRepository;
 import co.edu.unbosque.hermes.util.AESUtil;
 
@@ -33,6 +35,10 @@ public class UsuarioService implements CRUDOperation<UsuarioDTO> {
 	/** Repositorio para el acceso a datos de la entidad {@link Usuario}. */
 	@Autowired
 	private UsuarioRepository userRepo;
+
+	/** Repositorio de traducciones, para borrar el historial al eliminar un usuario. */
+	@Autowired
+	private TraduccionRepository traduccionRepo;
 
 	/** Mapeador para la conversión entre entidades y DTOs. */
 	@Autowired
@@ -108,29 +114,40 @@ public class UsuarioService implements CRUDOperation<UsuarioDTO> {
 
 	/**
 	 * Actualiza los datos de un usuario existente identificado por su ID.
-	 * 
+	 * <p>
+	 * El usuario puede conservar su propio nombre de usuario. La contraseña solo se
+	 * cambia si viene informada, y el rol solo si no es nulo.
+	 * </p>
+	 *
 	 * @param id        Identificador único del usuario a actualizar.
 	 * @param nuevoDato Objeto {@link UsuarioDTO} con la nueva información.
 	 * @return {@code 0} si la actualización fue exitosa; {@code 1} si el usuario no
-	 *         existe o el nombre de usuario ya está ocupado.
+	 *         existe; {@code 2} si el nombre de usuario ya lo usa otra cuenta.
 	 */
 	@Override
 	public int actualizarPorId(Long id, UsuarioDTO nuevoDato) {
 		Optional<Usuario> found = userRepo.findById(id);
-		Optional<Usuario> newFound = userRepo.searchByUsername(cifrar(nuevoDato.getUsername()));
-		if (found.isPresent() && !newFound.isPresent()) {
-			Usuario temp = found.get();
-			temp.setUsername(cifrar(nuevoDato.getUsername()));
-			temp.setEmail(cifrar(nuevoDato.getEmail()));
-			temp.setPassword(encoder.encode(nuevoDato.getPassword()));
-			if (nuevoDato.getRol() != null) {
-				temp.setRol(nuevoDato.getRol());
-			}
-			userRepo.save(temp);
-			return 0;
-		} else {
+		if (found.isEmpty()) {
 			return 1;
 		}
+
+		String usernameCifrado = cifrar(nuevoDato.getUsername());
+		Optional<Usuario> conMismoNombre = userRepo.searchByUsername(usernameCifrado);
+		if (conMismoNombre.isPresent() && !conMismoNombre.get().getId().equals(id)) {
+			return 2;
+		}
+
+		Usuario temp = found.get();
+		temp.setUsername(usernameCifrado);
+		temp.setEmail(cifrar(nuevoDato.getEmail()));
+		if (nuevoDato.getPassword() != null && !nuevoDato.getPassword().isBlank()) {
+			temp.setPassword(encoder.encode(nuevoDato.getPassword()));
+		}
+		if (nuevoDato.getRol() != null) {
+			temp.setRol(nuevoDato.getRol());
+		}
+		userRepo.save(temp);
+		return 0;
 	}
 
 	/**
@@ -148,15 +165,18 @@ public class UsuarioService implements CRUDOperation<UsuarioDTO> {
 	}
 
 	/**
-	 * Elimina un usuario del sistema utilizando su identificador único.
-	 * 
+	 * Elimina un usuario del sistema utilizando su identificador único, junto con
+	 * su historial de traducciones (que depende de él por llave foránea).
+	 *
 	 * @param id Identificador único del usuario.
 	 * @return {@code 0} si fue eliminado con éxito; {@code 1} si el usuario no fue
 	 *         encontrado.
 	 */
 	@Override
+	@Transactional
 	public int eliminarPorId(Long id) {
 		if (userRepo.existsById(id)) {
+			traduccionRepo.deleteByUsuarioId(id);
 			userRepo.deleteById(id);
 			return 0;
 		}

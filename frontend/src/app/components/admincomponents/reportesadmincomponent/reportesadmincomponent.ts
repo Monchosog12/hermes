@@ -9,11 +9,11 @@ import { EstadisticaMensual, ReporteSolicitud, ReporteUsuario } from '../../../m
 })
 export class Reportesadmincomponent { // Datos ficticios de usuarios
   usuarios: ReporteUsuario[] = [
-    { id: 1, nombre: 'Laura Martínez', correo: 'laura@email.com', fechaRegistro: '2026-01-12', estado: 'Activo' },
-    { id: 2, nombre: 'Carlos Rodríguez', correo: 'carlos@email.com', fechaRegistro: '2026-02-08', estado: 'Activo' },
-    { id: 3, nombre: 'Mariana López', correo: 'mariana@email.com', fechaRegistro: '2026-03-15', estado: 'Inactivo' },
-    { id: 4, nombre: 'Andrés Gómez', correo: 'andres@email.com', fechaRegistro: '2026-04-20', estado: 'Activo' },
-    { id: 5, nombre: 'Sofía Torres', correo: 'sofia@email.com', fechaRegistro: '2026-05-03', estado: 'Activo' }
+    { id: 1, nombre: 'Laura Martínez', correo: 'laura@email.com', fechaRegistro: '2026-01-12' },
+    { id: 2, nombre: 'Carlos Rodríguez', correo: 'carlos@email.com', fechaRegistro: '2026-02-08' },
+    { id: 3, nombre: 'Mariana López', correo: 'mariana@email.com', fechaRegistro: '2026-03-15' },
+    { id: 4, nombre: 'Andrés Gómez', correo: 'andres@email.com', fechaRegistro: '2026-04-20' },
+    { id: 5, nombre: 'Sofía Torres', correo: 'sofia@email.com', fechaRegistro: '2026-05-03' }
   ];
 
   // Datos ficticios de solicitudes
@@ -41,10 +41,6 @@ export class Reportesadmincomponent { // Datos ficticios de usuarios
   // Resumen de usuarios
   get totalUsuarios(): number {
     return this.usuarios.length;
-  }
-
-  get usuariosActivos(): number {
-    return this.usuarios.filter(usuario => usuario.estado === 'Activo').length;
   }
 
   // Resumen de solicitudes
@@ -91,14 +87,13 @@ export class Reportesadmincomponent { // Datos ficticios de usuarios
 
   // Descargar reporte de usuarios
   descargarReporteUsuarios(): void {
-    const encabezados = ['ID', 'Nombre', 'Correo', 'Fecha de registro', 'Estado'];
+    const encabezados = ['ID', 'Nombre', 'Correo', 'Fecha de registro'];
 
     const filas = this.usuarios.map(usuario => [
       usuario.id,
       usuario.nombre,
       usuario.correo,
-      usuario.fechaRegistro,
-      usuario.estado
+      usuario.fechaRegistro
     ]);
 
     this.descargarCSV('reporte_usuarios.csv', encabezados, filas);

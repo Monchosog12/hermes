@@ -23,5 +23,14 @@ public interface TraduccionRepository extends JpaRepository<Traduccion, Long>{
 	 * @return Lista de objetos {@link Traduccion} ordenados de la más reciente a la más antigua.
 	 */
 	List<Traduccion> findByUsuarioIdOrderByFechaDesc(Long id);
-	
+
+	/**
+	 * Elimina todas las traducciones asociadas a un usuario. Se usa antes de
+	 * eliminar el usuario, ya que cada traducción tiene una llave foránea
+	 * obligatoria hacia él.
+	 *
+	 * @param id Identificador único del usuario.
+	 */
+	void deleteByUsuarioId(Long id);
+
 }

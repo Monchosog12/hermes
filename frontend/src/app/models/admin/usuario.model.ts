@@ -3,5 +3,4 @@ export interface Usuario {
   nombre: string;
   correo: string;
   fechaRegistro: string;
-  estado: 'Activo' | 'Inactivo';
 }

@@ -20,8 +20,6 @@ public class UsuarioDTO {
 	private String username;
 	private String password;
 	private Rol rol;
-	private boolean cuentaNoExpirada;
-
 
 	public UsuarioDTO() {
 		// TODO Auto-generated constructor stub
@@ -35,29 +33,20 @@ public class UsuarioDTO {
 	 * @param password Contraseña de acceso del usuario.
 	 * @param rol      Rol o nivel de privilegios asignado (tipo {@link Rol}).
 	 */
-	public UsuarioDTO(String email, String username, String password, Rol rol, boolean cuentaNoExpirada ) {
+	public UsuarioDTO(String email, String username, String password, Rol rol) {
 		this.email = email;
 		this.username = username;
 		this.password = password;
 		this.rol = rol;
-		this.cuentaNoExpirada = cuentaNoExpirada;
 	}
 
 	/**
 	 * Obtiene el identificador único del usuario.
-	 * 
+	 *
 	 * @return ID único de la entidad.
 	 */
 	public Long getId() {
 		return id;
-	}
-
-	public boolean isCuentaNoExpirada() {
-		return cuentaNoExpirada;
-	}
-
-	public void setCuentaNoExpirada(boolean cuentaNoExpirada) {
-		this.cuentaNoExpirada = cuentaNoExpirada;
 	}
 
 	/**
@@ -143,7 +132,7 @@ public class UsuarioDTO {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(Boolean.valueOf(cuentaNoExpirada), email, id, password, rol, username);
+		return Objects.hash(email, id, password, rol, username);
 	}
 
 	@Override
@@ -155,14 +144,13 @@ public class UsuarioDTO {
 		if (getClass() != obj.getClass())
 			return false;
 		UsuarioDTO other = (UsuarioDTO) obj;
-		return cuentaNoExpirada == other.cuentaNoExpirada && Objects.equals(email, other.email)
-				&& Objects.equals(id, other.id) && Objects.equals(password, other.password) && rol == other.rol
+		return Objects.equals(email, other.email) && Objects.equals(id, other.id) && Objects.equals(password, other.password) && rol == other.rol
 				&& Objects.equals(username, other.username);
 	}
 
 	@Override
 	public String toString() {
 		return "UsuarioDTO [id=" + id + ", email=" + email + ", username=" + username + ", password=" + password
-				+ ", rol=" + rol + ", cuentaNoExpirada=" + cuentaNoExpirada + "]";
+				+ ", rol=" + rol + "]";
 	}
 }
