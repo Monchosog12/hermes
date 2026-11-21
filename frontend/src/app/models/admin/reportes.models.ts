@@ -3,7 +3,6 @@ export interface ReporteUsuario {
   nombre: string;
   correo: string;
   fechaRegistro: string;
-  estado: 'Activo' | 'Inactivo';
 }
 
 export interface ReporteSolicitud {

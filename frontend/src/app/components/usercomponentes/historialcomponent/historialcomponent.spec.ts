@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { FormsModule } from '@angular/forms';
 import { Historialcomponent } from './historialcomponent';
 
 describe('Historialcomponent', () => {
@@ -8,6 +11,8 @@ describe('Historialcomponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [Historialcomponent],
+      imports: [FormsModule],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Historialcomponent);

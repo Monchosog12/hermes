@@ -30,26 +30,6 @@
       </div>
     </article>
 
-    <article class="stat-card">
-      <div class="stat-icon green">
-        <i class="fa-solid fa-user-check"></i>
-      </div>
-      <div>
-        <h2>{{ totalActivos() }}</h2>
-        <p>Usuarios activos</p>
-      </div>
-    </article>
-
-    <article class="stat-card">
-      <div class="stat-icon orange">
-        <i class="fa-solid fa-user-clock"></i>
-      </div>
-      <div>
-        <h2>{{ totalInactivos() }}</h2>
-        <p>Usuarios inactivos</p>
-      </div>
-    </article>
-
   </section>
 
   <!-- Directorio -->
@@ -66,7 +46,7 @@
       </span>
     </div>
 
-    <!-- Búsqueda y filtros -->
+    <!-- Búsqueda -->
     <div class="users-toolbar">
 
       <div class="search-box">
@@ -79,16 +59,6 @@
         >
       </div>
 
-      <div class="filter-box">
-        <i class="fa-solid fa-filter"></i>
-
-        <select [(ngModel)]="filtroEstado">
-          <option value="Todos">Todos los estados</option>
-          <option value="Activo">Activos</option>
-          <option value="Inactivo">Inactivos</option>
-        </select>
-      </div>
-
     </div>
 
     <!-- Tabla de usuarios -->
@@ -99,9 +69,7 @@
         <thead>
         <tr>
           <th>USUARIO</th>
-          <th>FECHA DE REGISTRO</th>
-          <th>ESTADO</th>
-          <th>ACCIÓN</th>
+          <th class="actions-header">ACCIONES</th>
         </tr>
         </thead>
 
@@ -113,42 +81,47 @@
             <div class="user-information">
 
               <div class="user-avatar">
-                {{ user.username.charAt(0).toUpperCase() }}
+                {{ (user.username || '?').charAt(0).toUpperCase() }}
               </div>
 
               <div>
-                <h3>{{ user.username }}</h3>
-                <p>{{ user.email }}</p>
+                <h3>
+                  {{ user.username || 'Usuario sin datos' }}
+                  <span *ngIf="user.rol === 'ADMIN'" class="role-badge">Admin</span>
+                </h3>
+                <p>{{ user.email || 'Correo no disponible' }}</p>
               </div>
 
             </div>
           </td>
 
           <td>
-      <span
-        class="user-status"
-        [ngClass]="user.cuentaNoExpirada ? 'active' : 'inactive'"
-      >
-        <span class="status-dot"></span>
+            <div class="user-actions">
+              <button class="edit-button" type="button" (click)="abrirEdicion(user)">
+                <i class="fa-solid fa-pen-to-square"></i>
+                Actualizar
+              </button>
 
-        {{ user.cuentaNoExpirada ? 'Activo' : 'Inactivo' }}
-      </span>
-          </td>
-
-          <td>
-            <button class="view-button" type="button">
-              Ver usuario
-              <i class="fa-solid fa-arrow-up-right-from-square"></i>
-            </button>
+              <button
+                class="delete-button"
+                type="button"
+                (click)="pedirConfirmacionEliminar(user)"
+                [disabled]="esUsuarioActual(user)"
+                [title]="esUsuarioActual(user) ? 'No puedes eliminar tu propia cuenta' : 'Eliminar usuario'"
+              >
+                <i class="fa-solid fa-trash"></i>
+                Eliminar
+              </button>
+            </div>
           </td>
 
         </tr>
 
         <tr *ngIf="usuariosFiltrados.length === 0">
-          <td colspan="3" class="empty-state">
+          <td colspan="2" class="empty-state">
             <i class="fa-solid fa-user-slash"></i>
             <h3>No se encontraron usuarios</h3>
-            <p>Prueba con otro nombre, correo o estado.</p>
+            <p>Prueba con otro nombre o correo.</p>
           </td>
         </tr>
 
@@ -161,3 +134,126 @@
   </section>
 
 </main>
+
+<!-- Ventana: actualizar usuario -->
+@if (usuarioEditando(); as usuario) {
+<div class="modal-backdrop-hermes" (click)="cerrarEdicion()">
+  <div
+    class="modal-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="titulo-editar-usuario"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="modal-header-hermes">
+      <div>
+        <span class="section-eyebrow">ACTUALIZAR USUARIO</span>
+        <h2 id="titulo-editar-usuario">{{ usuario.username || 'Usuario sin datos' }}</h2>
+      </div>
+      <button type="button" class="close-button" aria-label="Cerrar" (click)="cerrarEdicion()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <form #formEditar="ngForm" (ngSubmit)="guardarCambios(formEditar)" novalidate>
+
+      <label class="form-field">
+        <span>Nombre de usuario</span>
+        <input
+          type="text"
+          name="username"
+          [(ngModel)]="formulario.username"
+          #username="ngModel"
+          required
+          maxlength="50"
+          autocomplete="off"
+        >
+        <small *ngIf="username.invalid && username.touched" class="field-error">
+          El nombre de usuario es obligatorio.
+        </small>
+      </label>
+
+      <label class="form-field">
+        <span>Correo electrónico</span>
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="formulario.email"
+          #email="ngModel"
+          required
+          email
+          autocomplete="off"
+        >
+        <small *ngIf="email.invalid && email.touched" class="field-error">
+          Escribe un correo válido.
+        </small>
+      </label>
+
+      <label class="form-field">
+        <span>Rol</span>
+        <select name="rol" [(ngModel)]="formulario.rol" required>
+          <option *ngFor="let rol of roles" [ngValue]="rol.valor">{{ rol.etiqueta }}</option>
+        </select>
+      </label>
+
+      <label class="form-field">
+        <span>Nueva contraseña <em>(opcional)</em></span>
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="formulario.password"
+          #password="ngModel"
+          minlength="8"
+          autocomplete="new-password"
+          placeholder="Déjala vacía para conservar la actual"
+        >
+        <small *ngIf="password.invalid && password.touched" class="field-error">
+          Debe tener al menos 8 caracteres.
+        </small>
+      </label>
+
+      <div class="modal-actions">
+        <button type="button" class="secondary-action" (click)="cerrarEdicion()" [disabled]="guardando">
+          Cancelar
+        </button>
+        <button type="submit" class="primary-action" [disabled]="guardando">
+          {{ guardando ? 'Guardando…' : 'Guardar cambios' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+}
+
+<!-- Ventana: confirmar eliminación -->
+@if (usuarioAEliminar(); as usuario) {
+<div class="modal-backdrop-hermes" (click)="cancelarEliminar()">
+  <div
+    class="modal-card modal-small"
+    role="alertdialog"
+    aria-modal="true"
+    aria-labelledby="titulo-eliminar-usuario"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="delete-icon">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+    </div>
+
+    <h2 id="titulo-eliminar-usuario">¿Eliminar usuario?</h2>
+    <p class="modal-text">
+      Se eliminará <strong>{{ usuario.username || 'este usuario' }}</strong> y todo su historial de
+      traducciones. Esta acción no se puede deshacer.
+    </p>
+
+    <div class="modal-actions">
+      <button type="button" class="secondary-action" (click)="cancelarEliminar()" [disabled]="eliminando">
+        Cancelar
+      </button>
+      <button type="button" class="danger-action" (click)="confirmarEliminar()" [disabled]="eliminando">
+        {{ eliminando ? 'Eliminando…' : 'Sí, eliminar' }}
+      </button>
+    </div>
+  </div>
+</div>
+}

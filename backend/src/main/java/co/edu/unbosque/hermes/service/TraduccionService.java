@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import co.edu.unbosque.hermes.dto.HistorialDTO;
 import co.edu.unbosque.hermes.dto.TraduccionDTO;
 import co.edu.unbosque.hermes.entity.Traduccion;
 import co.edu.unbosque.hermes.repository.TraduccionRepository;
@@ -77,6 +78,77 @@ public class TraduccionService implements CRUDOperation<TraduccionDTO> {
 			dtoList.add(aDtoDescifrado(entity));
 		});
 		return dtoList;
+	}
+
+	/**
+	 * Obtiene el historial de un usuario, de la traducción más reciente a la más
+	 * antigua, con los códigos descifrados y sin incluir los datos del usuario.
+	 *
+	 * @param userId Identificador del usuario autenticado.
+	 * @return Lista de {@link HistorialDTO}.
+	 */
+	public List<HistorialDTO> historialDeUsuario(Long userId) {
+		List<HistorialDTO> lista = new ArrayList<>();
+		repo.findByUsuarioIdOrderByFechaDesc(userId).forEach((entity) -> lista.add(aHistorialDTO(entity)));
+		return lista;
+	}
+
+	/**
+	 * Modifica una traducción del historial, solo si pertenece al usuario indicado.
+	 * Se actualizan los códigos (cifrados de nuevo) y los lenguajes; el modelo, las
+	 * mejoras y la fecha original se conservan.
+	 *
+	 * @param id     Identificador de la traducción.
+	 * @param userId Identificador del usuario autenticado.
+	 * @param dato   Nuevos valores en texto plano.
+	 * @return {@code 0} si se actualizó; {@code 1} si no existe o no pertenece al
+	 *         usuario.
+	 */
+	public int actualizarDeUsuario(Long id, Long userId, HistorialDTO dato) {
+		Optional<Traduccion> found = buscarDeUsuario(id, userId);
+		if (found.isEmpty()) {
+			return 1;
+		}
+		Traduccion entity = found.get();
+		entity.setCodigoOriginal(cifrar(dato.getCodigoOriginal()));
+		entity.setCodigoTraducido(cifrar(dato.getCodigoTraducido()));
+		entity.setLenguajeOrigen(dato.getLenguajeOrigen());
+		entity.setLenguajeDestino(dato.getLenguajeDestino());
+		repo.save(entity);
+		return 0;
+	}
+
+	/**
+	 * Elimina una traducción del historial, solo si pertenece al usuario indicado.
+	 *
+	 * @param id     Identificador de la traducción.
+	 * @param userId Identificador del usuario autenticado.
+	 * @return {@code 0} si se eliminó; {@code 1} si no existe o no pertenece al
+	 *         usuario.
+	 */
+	public int eliminarDeUsuario(Long id, Long userId) {
+		Optional<Traduccion> found = buscarDeUsuario(id, userId);
+		if (found.isEmpty()) {
+			return 1;
+		}
+		repo.delete(found.get());
+		return 0;
+	}
+
+	/**
+	 * Busca una traducción por ID y la devuelve solo si su propietario es el
+	 * usuario indicado. Se responde igual que si no existiera para no revelar
+	 * traducciones de otros usuarios.
+	 */
+	private Optional<Traduccion> buscarDeUsuario(Long id, Long userId) {
+		return repo.findById(id).filter((t) -> t.getUsuario() != null && t.getUsuario().getId().equals(userId));
+	}
+
+	/** Convierte la entidad en {@link HistorialDTO} con los códigos descifrados. */
+	private HistorialDTO aHistorialDTO(Traduccion entity) {
+		return new HistorialDTO(entity.getId(), descifrar(entity.getCodigoOriginal()),
+				descifrar(entity.getCodigoTraducido()), entity.getLenguajeOrigen(), entity.getLenguajeDestino(),
+				entity.getModelo(), entity.getFecha());
 	}
 
 	/**

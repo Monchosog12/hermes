@@ -6,7 +6,6 @@ import { Headercomponent } from './components/usercomponentes/headercomponent/he
 import { Footercomponent } from './components/usercomponentes/footercomponent/footercomponent';
 import { Traductorcomponent } from './components/usercomponentes/traductorcomponent/traductorcomponent';
 import { Codeeditorcomponent } from './components/usercomponentes/codeeditorcomponent/codeeditorcomponent';
-import { Mejoracodigocomponent } from './components/usercomponentes/mejoracodigocomponent/mejoracodigocomponent';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { Principaladmincomponent } from './components/admincomponents/principaladmincomponent/principaladmincomponent';
@@ -24,7 +23,6 @@ import { authInterceptor } from './interceptors/auth.interceptor';
     Footercomponent,
     Traductorcomponent,
     Codeeditorcomponent,
-    Mejoracodigocomponent,
     Principaladmincomponent,
     Historialcomponent,
     Headeradmincomponent,
